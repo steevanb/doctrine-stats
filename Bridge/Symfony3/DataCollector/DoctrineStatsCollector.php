@@ -2,6 +2,7 @@
 
 namespace steevanb\DoctrineStats\Bridge\Symfony3\DataCollector;
 
+use Doctrine\ORM\EntityManagerInterface;
 use steevanb\DoctrineStats\Doctrine\ORM\Event\PostLazyLoadingEventArgs;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,6 +12,17 @@ class DoctrineStatsCollector extends DataCollector
 {
     /** @var PostLazyLoadingEventArgs[] */
     protected $lazyLoadings = array();
+
+    /** @var EntityManagerInterface */
+    protected $entityManager;
+
+    /**
+     * @param EntityManagerInterface $entityManager
+     */
+    public function __construct(EntityManagerInterface $entityManager = null)
+    {
+        $this->entityManager = $entityManager;
+    }
 
     /**
      * @return string
@@ -27,7 +39,15 @@ class DoctrineStatsCollector extends DataCollector
      */
     public function collect(Request $request, Response $response, \Exception $exception = null)
     {
-        $this->data = array('lazyLoadings' => count($this->lazyLoadings));
+        $this->data = array('lazyLoadings' => $this->lazyLoadings);
+    }
+
+    /**
+     * @return array
+     */
+    public function getLazyLoadings()
+    {
+        return $this->data['lazyLoadings'];
     }
 
     /**
@@ -35,7 +55,15 @@ class DoctrineStatsCollector extends DataCollector
      */
     public function countLazyLoadings()
     {
-        return $this->data['lazyLoadings'];
+        return count($this->data['lazyLoadings']);
+    }
+
+    /**
+     * @return int
+     */
+    public function countWarnings()
+    {
+        return $this->countLazyLoadings();
     }
 
     /**
