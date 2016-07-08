@@ -1,13 +1,13 @@
 <?php
 
-namespace steevanb\DoctrineStats\Bridge\Symfony3\DependencyInjection;
+namespace steevanb\DoctrineStats\Bridge\Symfony3DoctrineStatsBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader;
 
-class DoctrineStatsExtension extends Extension
+class Symfony3DoctrineStatsExtension extends Extension
 {
     /**
      * @param array $configs

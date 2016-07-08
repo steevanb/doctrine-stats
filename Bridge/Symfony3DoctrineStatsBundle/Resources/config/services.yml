@@ -1,0 +1,15 @@
+services:
+    doctrine_stats.data_collector:
+        class: steevanb\DoctrineStats\Bridge\Symfony3DoctrineStatsBundle\DataCollector\DoctrineStatsCollector
+        public: false
+        tags:
+            -
+                name: data_collector
+                id: 'doctrine_stats'
+                template: 'Symfony3DoctrineStatsBundle:DataCollector:template.html.twig'
+
+    doctrine_stats.doctrine_event_subscriber:
+        class: steevanb\DoctrineStats\Bridge\Symfony3DoctrineStatsBundle\EventSubscriber\DoctrineEventSubscriber
+        arguments: [ '@doctrine_stats.data_collector' ]
+        tags:
+            - { name: doctrine.event_subscriber }

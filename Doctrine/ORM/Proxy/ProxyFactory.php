@@ -31,11 +31,11 @@ class ProxyFactory extends DoctrineProxyFactory
             // Doctrine\ORM\Proxy\ProxyFactory::$em is private, so use Reflection to get it
             $property = new \ReflectionProperty(get_class($entityPersister), 'em');
             $property->setAccessible(true);
-            /** @var EntityManagerInterface $em */
-            $em = $property->getValue($entityPersister);
+            /** @var EntityManagerInterface $entityManager */
+            $entityManager = $property->getValue($entityPersister);
             $property->setAccessible(false);
-            $eventArgs = new PostLazyLoadingEventArgs($proxy);
-            $em->getEventManager()->dispatchEvent('postLazyLoading', $eventArgs);
+            $eventArgs = new PostLazyLoadingEventArgs($entityManager, $proxy);
+            $entityManager->getEventManager()->dispatchEvent('postLazyLoading', $eventArgs);
         };
 
         $proxyDefinition->initializer = $initializer;
