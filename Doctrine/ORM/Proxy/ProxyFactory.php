@@ -35,7 +35,7 @@ class ProxyFactory extends DoctrineProxyFactory
             $entityManager = $property->getValue($entityPersister);
             $property->setAccessible(false);
             $eventArgs = new PostLazyLoadingEventArgs($entityManager, $proxy);
-            $entityManager->getEventManager()->dispatchEvent('postLazyLoading', $eventArgs);
+            $entityManager->getEventManager()->dispatchEvent(PostLazyLoadingEventArgs::EVENT_NAME, $eventArgs);
         };
 
         $proxyDefinition->initializer = $initializer;

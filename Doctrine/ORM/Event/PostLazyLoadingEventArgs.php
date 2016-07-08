@@ -8,6 +8,8 @@ use Doctrine\ORM\Proxy\Proxy;
 
 class PostLazyLoadingEventArgs extends EventArgs
 {
+    const EVENT_NAME = 'postLazyLoading';
+
     /** @var EntityManagerInterface */
     protected $entityManager;
 

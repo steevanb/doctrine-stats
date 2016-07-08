@@ -1,6 +1,7 @@
 services:
-    doctrine_stats.data_collector:
+    doctrine_stats.data_collector.stats:
         class: steevanb\DoctrineStats\Bridge\Symfony3DoctrineStatsBundle\DataCollector\DoctrineStatsCollector
+        arguments: [ '@doctrine.dbal.logger.profiling.default' ]
         public: false
         tags:
             -
@@ -8,8 +9,15 @@ services:
                 id: 'doctrine_stats'
                 template: 'Symfony3DoctrineStatsBundle:DataCollector:template.html.twig'
 
-    doctrine_stats.doctrine_event_subscriber:
+    doctrine_stats.event_subscriber.doctrine:
         class: steevanb\DoctrineStats\Bridge\Symfony3DoctrineStatsBundle\EventSubscriber\DoctrineEventSubscriber
-        arguments: [ '@doctrine_stats.data_collector' ]
+        arguments: [ '@doctrine_stats.data_collector.stats' ]
         tags:
             - { name: doctrine.event_subscriber }
+            - { name: monolog.logger, channel: doctrine }
+
+    doctrine_stats.event_listener.managed_entities:
+        class: steevanb\DoctrineStats\Bridge\Symfony3DoctrineStatsBundle\EventListener\ManagedEntitiesListener
+        arguments: [ '@doctrine', '@doctrine_stats.data_collector.stats' ]
+        tags:
+            - { name: kernel.event_listener, event: kernel.finish_request, method: saveManagedEntities }
