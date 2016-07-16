@@ -1,16 +1,18 @@
 {
     "name": "steevanb/doctrine-stats",
     "license": "MIT",
-    "description": "Get statistiques about Doctrine : lazy loaded entities (count, time taken, etc)",
+    "description": "Count managed entities and lazy loaded entities, hydration time, etc",
     "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
-            "steevanb\\DoctrineStats\\Bridge": "Bridge",
-            "steevanb\\DoctrineStats\\Doctrine": "Doctrine"
+            "steevanb\\DoctrineStats\\Bridge\\": "Bridge",
+            "steevanb\\DoctrineStats\\Doctrine\\": "Doctrine"
         }
     },
     "require": {
-        "doctrine/orm": "^2.4.8"
+        "php": ">=5.4.0",
+        "doctrine/orm": "^2.4.8",
+        "steevanb/composer-overload-class": "^1.0"
     },
     "repositories": [
         {
