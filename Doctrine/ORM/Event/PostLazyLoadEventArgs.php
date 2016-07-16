@@ -6,7 +6,7 @@ use Doctrine\Common\EventArgs;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Proxy\Proxy;
 
-class PostLazyLoadingEventArgs extends EventArgs
+class PostLazyLoadEventArgs extends EventArgs
 {
     const EVENT_NAME = 'postLazyLoading';
 

@@ -6,7 +6,7 @@ use Doctrine\Common\Proxy\ProxyDefinition;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Proxy\Proxy;
 use Doctrine\ORM\Proxy\ProxyFactory as DoctrineProxyFactory;
-use steevanb\DoctrineStats\Doctrine\ORM\Event\PostLazyLoadingEventArgs;
+use steevanb\DoctrineStats\Doctrine\ORM\Event\PostLazyLoadEventArgs;
 
 class ProxyFactory extends DoctrineProxyFactory
 {
@@ -34,8 +34,8 @@ class ProxyFactory extends DoctrineProxyFactory
             /** @var EntityManagerInterface $entityManager */
             $entityManager = $property->getValue($entityPersister);
             $property->setAccessible(false);
-            $eventArgs = new PostLazyLoadingEventArgs($entityManager, $proxy);
-            $entityManager->getEventManager()->dispatchEvent(PostLazyLoadingEventArgs::EVENT_NAME, $eventArgs);
+            $eventArgs = new PostLazyLoadEventArgs($entityManager, $proxy);
+            $entityManager->getEventManager()->dispatchEvent(PostLazyLoadEventArgs::EVENT_NAME, $eventArgs);
         };
 
         $proxyDefinition->initializer = $initializer;

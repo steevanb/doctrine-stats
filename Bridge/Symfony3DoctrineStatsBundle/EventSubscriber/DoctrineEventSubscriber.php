@@ -8,7 +8,7 @@ use Doctrine\ORM\Events;
 use Doctrine\ORM\Proxy\Proxy;
 use steevanb\DoctrineStats\Bridge\Symfony3DoctrineStatsBundle\DataCollector\DoctrineStatsCollector;
 use steevanb\DoctrineStats\Doctrine\ORM\Event\PostHydrationEventArgs;
-use steevanb\DoctrineStats\Doctrine\ORM\Event\PostLazyLoadingEventArgs;
+use steevanb\DoctrineStats\Doctrine\ORM\Event\PostLazyLoadEventArgs;
 use steevanb\DoctrineStats\Doctrine\ORM\Event\PreHydrationEventArgs;
 
 class DoctrineEventSubscriber implements EventSubscriber
@@ -33,7 +33,7 @@ class DoctrineEventSubscriber implements EventSubscriber
     public function getSubscribedEvents()
     {
         return array(
-            PostLazyLoadingEventArgs::EVENT_NAME,
+            PostLazyLoadEventArgs::EVENT_NAME,
             PreHydrationEventArgs::EVENT_NAME,
             PostHydrationEventArgs::EVENT_NAME,
             Events::postLoad
@@ -41,9 +41,9 @@ class DoctrineEventSubscriber implements EventSubscriber
     }
 
     /**
-     * @param PostLazyLoadingEventArgs $eventArgs
+     * @param PostLazyLoadEventArgs $eventArgs
      */
-    public function postLazyLoading(PostLazyLoadingEventArgs $eventArgs)
+    public function postLazyLoading(PostLazyLoadEventArgs $eventArgs)
     {
         $this
             ->doctrineStatsCollector
