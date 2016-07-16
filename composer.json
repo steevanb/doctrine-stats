@@ -4,7 +4,10 @@
     "description": "Get statistiques about Doctrine : lazy loaded entities (count, time taken, etc)",
     "minimum-stability": "dev",
     "autoload": {
-        "psr-4": { "steevanb\\DoctrineStats\\": "" }
+        "psr-4": {
+            "steevanb\\DoctrineStats\\Bridge": "Bridge",
+            "steevanb\\DoctrineStats\\Doctrine": "Doctrine"
+        }
     },
     "require": {
         "doctrine/orm": "^2.4.8"

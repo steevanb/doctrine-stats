@@ -6,8 +6,9 @@ services:
         tags:
             -
                 name: data_collector
-                id: 'doctrine_stats'
+                id: doctrine_stats
                 template: 'Symfony3DoctrineStatsBundle:DataCollector:template.html.twig'
+                priority: 249
 
     doctrine_stats.event_subscriber.doctrine:
         class: steevanb\DoctrineStats\Bridge\Symfony3DoctrineStatsBundle\EventSubscriber\DoctrineEventSubscriber
@@ -15,9 +16,3 @@ services:
         tags:
             - { name: doctrine.event_subscriber }
             - { name: monolog.logger, channel: doctrine }
-
-    doctrine_stats.event_listener.managed_entities:
-        class: steevanb\DoctrineStats\Bridge\Symfony3DoctrineStatsBundle\EventListener\ManagedEntitiesListener
-        arguments: [ '@doctrine', '@doctrine_stats.data_collector.stats' ]
-        tags:
-            - { name: kernel.event_listener, event: kernel.finish_request, method: saveManagedEntities }

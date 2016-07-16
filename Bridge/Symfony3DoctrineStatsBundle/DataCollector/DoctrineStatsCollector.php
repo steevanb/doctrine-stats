@@ -12,13 +12,28 @@ use Symfony\Component\HttpKernel\DataCollector\DataCollector;
 class DoctrineStatsCollector extends DataCollector
 {
     /** @var array */
-    protected $lazyLoadedEntities = array();
+    protected $lazyLoadedEntities = [];
 
     /** @var SQLLogger */
     protected $sqlLogger;
 
     /** @var array */
-    protected $managerEntities = array();
+    protected $managedEntities = [];
+
+    /** @var array */
+    protected $hydrationTimes = [];
+
+    /** @var int */
+    protected $queriesAlert = 1;
+
+    /** @var int */
+    protected $managedEntitiesAlert = 10;
+
+    /** @var int */
+    protected $lazyLoadedEntitiesAlert = 1;
+
+    /** @var int */
+    protected $hydrationTimeAlert = 5;
 
     /**
      * @param DebugStack $sqlLogger
@@ -34,6 +49,50 @@ class DoctrineStatsCollector extends DataCollector
     public function getName()
     {
         return 'doctrine_stats';
+    }
+
+    /**
+     * @param int $count
+     * @return $this
+     */
+    public function setQueriesAlert($count)
+    {
+        $this->queriesAlert = $count;
+
+        return $this;
+    }
+
+    /**
+     * @param int $count
+     * @return $this
+     */
+    public function setManagedEntitiesAlert($count)
+    {
+        $this->managedEntitiesAlert = $count;
+
+        return $this;
+    }
+
+    /**
+     * @param int $count
+     * @return $this
+     */
+    public function setLazyLoadedEntitiesAlert($count)
+    {
+        $this->lazyLoadedEntitiesAlert = $count;
+
+        return $this;
+    }
+
+    /**
+     * @param int $time Time in milliseconds
+     * @return $this
+     */
+    public function setHydrationTimeAlert($time)
+    {
+        $this->hydrationTimeAlert = $time;
+
+        return $this;
     }
 
     /**
@@ -75,10 +134,25 @@ class DoctrineStatsCollector extends DataCollector
      */
     public function addManagedEntity($className, $identifiers)
     {
-        if (array_key_exists($className, $this->managerEntities) === false) {
-            $this->managerEntities[$className] = array();
+        if (array_key_exists($className, $this->managedEntities) === false) {
+            $this->managedEntities[$className] = array();
         }
-        $this->managerEntities[$className][] = $identifiers;
+        $this->managedEntities[$className][] = $identifiers;
+
+        return $this;
+    }
+
+    /**
+     * @param string $hydratorClassName
+     * @param float $time Time, in milliseconds
+     * @return $this
+     */
+    public function addHydrationTime($hydratorClassName, $time)
+    {
+        if (isset($this->hydrationTimes[$hydratorClassName]) === false) {
+            $this->hydrationTimes[$hydratorClassName] = 0;
+        }
+        $this->hydrationTimes[$hydratorClassName] += $time;
 
         return $this;
     }
@@ -93,7 +167,12 @@ class DoctrineStatsCollector extends DataCollector
         $this->data = array(
             'lazyLoadedEntities' => $this->lazyLoadedEntities,
             'queries' => $this->sqlLogger->queries,
-            'managedEntities' => $this->managerEntities
+            'managedEntities' => $this->managedEntities,
+            'hydrationTimes' => $this->hydrationTimes,
+            'queriesAlert' => $this->queriesAlert,
+            'managedEntitiesAlert' => $this->managedEntitiesAlert,
+            'lazyLoadedEntitiesAlert' => $this->lazyLoadedEntitiesAlert,
+            'hydrationTimeAlert' => $this->hydrationTimeAlert
         );
     }
 
@@ -187,7 +266,7 @@ class DoctrineStatsCollector extends DataCollector
     {
         static $ordered = false;
         if ($ordered === false) {
-            uasort($this->data['managedEntities'], function ($managedA, $managedB) {
+            uasort($this->data['managedEntities'], function($managedA, $managedB) {
                 return $managedA > $managedB ? -1 : 1;
             });
             $ordered = true;
@@ -207,6 +286,73 @@ class DoctrineStatsCollector extends DataCollector
         }
 
         return $count;
+    }
+
+    /**
+     * @return float
+     */
+    public function getHydrationTotalTime()
+    {
+        $return = 0;
+        foreach ($this->getHydrationTimes() as $time) {
+            $return += $time;
+        }
+
+        return round($return, 2);
+    }
+
+    /**
+     * @return array
+     */
+    public function getHydrationTimes()
+    {
+        return $this->data['hydrationTimes'];
+    }
+
+    /**
+     * @return int
+     */
+    public function getQueriesAlert()
+    {
+        return $this->data['queriesAlert'];
+    }
+
+    /**
+     * @return int
+     */
+    public function getManagedEntitiesAlert()
+    {
+        return $this->data['managedEntitiesAlert'];
+    }
+
+    /**
+     * @return int
+     */
+    public function getLazyLoadedEntitiesAlert()
+    {
+        return $this->data['lazyLoadedEntitiesAlert'];
+    }
+
+    /**
+     * @return int
+     */
+    public function getHydrationTimealert()
+    {
+        return $this->data['hydrationTimeAlert'];
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getToolbarStatus()
+    {
+        $alert =
+            $this->countQueries() >= $this->getQueriesAlert()
+            || $this->countManagedEntities() >= $this->data['managedEntitiesAlert']
+            || $this->countLazyLoadedEntities() >= $this->data['lazyLoadedEntitiesAlert']
+            || $this->getHydrationTotalTime() >= $this->data['hydrationTimeAlert'];
+
+        return $alert ? 'red' : null;
     }
 
     /**

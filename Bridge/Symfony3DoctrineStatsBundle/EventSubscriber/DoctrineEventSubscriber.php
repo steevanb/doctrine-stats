@@ -7,15 +7,17 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
 use Doctrine\ORM\Proxy\Proxy;
 use steevanb\DoctrineStats\Bridge\Symfony3DoctrineStatsBundle\DataCollector\DoctrineStatsCollector;
+use steevanb\DoctrineStats\Doctrine\ORM\Event\PostHydrationEventArgs;
 use steevanb\DoctrineStats\Doctrine\ORM\Event\PostLazyLoadingEventArgs;
+use steevanb\DoctrineStats\Doctrine\ORM\Event\PreHydrationEventArgs;
 
 class DoctrineEventSubscriber implements EventSubscriber
 {
-    /** @var array */
-    protected $loaded = array();
+    /** @var string */
+    protected $preHydrationEventId;
 
-    /** @var DoctrineStatsCollector */
-    protected $doctrineStatsCollector;
+    /** @var float */
+    protected $preHydrationTime;
 
     /**
      * @param DoctrineStatsCollector $doctrineStatsCollector
@@ -32,6 +34,8 @@ class DoctrineEventSubscriber implements EventSubscriber
     {
         return array(
             PostLazyLoadingEventArgs::EVENT_NAME,
+            PreHydrationEventArgs::EVENT_NAME,
+            PostHydrationEventArgs::EVENT_NAME,
             Events::postLoad
         );
     }
@@ -44,6 +48,33 @@ class DoctrineEventSubscriber implements EventSubscriber
         $this
             ->doctrineStatsCollector
             ->addLazyLoadedEntity($eventArgs->getEntityManager(), $eventArgs->getProxy());
+    }
+
+    /**
+     * @param PreHydrationEventArgs $eventArgs
+     */
+    public function preHydration(PreHydrationEventArgs $eventArgs)
+    {
+        if ($this->preHydrationEventId === null) {
+            $this->preHydrationEventId = $eventArgs->getEventId();
+            $this->preHydrationTime = microtime(true);
+        }
+    }
+
+    /**
+     * @param PostHydrationEventArgs $eventArgs
+     */
+    public function postHydration(PostHydrationEventArgs $eventArgs)
+    {
+        if ($this->preHydrationEventId === $eventArgs->getPreHydrationEventId()) {
+            $postHydrationTime = microtime(true);
+            $this->doctrineStatsCollector->addHydrationTime(
+                $eventArgs->getHydratorClassName(),
+                ($postHydrationTime - $this->preHydrationTime) * 1000
+            );
+            $this->preHydrationEventId = null;
+            $this->preHydrationTime = null;
+        }
     }
 
     /**
@@ -60,6 +91,6 @@ class DoctrineEventSubscriber implements EventSubscriber
         $identifiers = $metaData->getIdentifierValues($eventArgs->getEntity());
         $identifiersStr = implode(', ', $identifiers);
 
-        $this->loaded[$className][$identifiersStr] = true;
+        $this->doctrineStatsCollector->addManagedEntity($className, $identifiersStr);
     }
 }
