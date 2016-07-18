@@ -5,6 +5,7 @@ namespace steevanb\DoctrineStats\Bridge\Symfony3DoctrineStatsBundle\DataCollecto
 use Doctrine\DBAL\Logging\DebugStack;
 use Doctrine\DBAL\Logging\SQLLogger;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Internal\Hydration\ObjectHydrator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
@@ -353,6 +354,34 @@ class DoctrineStatsCollector extends DataCollector
             || $this->getHydrationTotalTime() >= $this->data['hydrationTimeAlert'];
 
         return $alert ? 'red' : null;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isHydratorsOverloaded()
+    {
+        return $this->countQueries() === 0 || ($this->countQueries() > 0 && count($this->data['hydrationTimes']) > 0);
+    }
+
+    /**
+     * @return bool
+     */
+    public function showDoctrineHydrationHelp()
+    {
+        $return = true;
+        if (in_array(ObjectHydrator::class, $this->getHydrationTimes())) {
+            foreach ($this->getQueries() as $sql => $data) {
+                $sub7 = substr($sql, 0, 7);
+                $sub8 = substr($sql, 0, 8);
+                if ($sub7 === 'INSERT ' || $sub7 === 'UPDATE ' || $sub8 === 'REPLACE ') {
+                    $return = false;
+                    break;
+                }
+            }
+        }
+
+        return $return;
     }
 
     /**

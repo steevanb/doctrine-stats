@@ -6,25 +6,16 @@
 
         {% set status = collector.getToolbarStatus() %}
             <span class="sf-toolbar-value">
-                {{ collector.countManagedEntities() }} /
                 {{ collector.countLazyLoadedEntities() }} /
-                {{ collector.getHydrationTotalTime() }} ms
+                {{ collector.countManagedEntities() }}
+                {% if collector.isHydratorsOverloaded() %}
+                    /
+                    {{ collector.getHydrationTotalTime() }} ms
+                {% endif %}
             </span>
     {% endset %}
 
     {% set text %}
-        <div class="sf-toolbar-info-piece">
-            <b>Managed entit{% if collector.countManagedEntities() > 1 %}ies{% else %}y{% endif %}</b>
-            <span class="sf-toolbar-status{% if collector.countManagedEntities() >= collector.getManagedEntitiesAlert() %} sf-toolbar-status-red{% endif %}">
-                {{ collector.countManagedEntities() }}
-            </span>
-        </div>
-        <div class="sf-toolbar-info-piece">
-            <b>Lazy loaded entities</b>
-            <span class="sf-toolbar-status{% if collector.countLazyLoadedEntities() >= collector.getLazyLoadedEntitiesAlert() %} sf-toolbar-status-yellow{% endif %}">
-                {{ collector.countLazyLoadedEntities() }}
-            </span>
-        </div>
         <div class="sf-toolbar-info-piece">
             <b>Quer{% if collector.countQueries() > 1 %}ies{% else %}y{% endif %}</b>
             <span class="sf-toolbar-status{% if collector.countQueries() >= collector.getQueriesAlert() %} sf-toolbar-status-red{% endif %}">
@@ -38,26 +29,42 @@
             </span>
         </div>
         <div class="sf-toolbar-info-piece">
-            <b>Hydration time</b>
-            <span class="sf-toolbar-status{% if collector.getHydrationTotalTime() >= collector.getHydrationTimeAlert() %} sf-toolbar-status-red{% endif %}">
-                {{ collector.getHydrationTotalTime() }} ms
+            <b>Lazy loaded entities</b>
+            <span class="sf-toolbar-status{% if collector.countLazyLoadedEntities() >= collector.getLazyLoadedEntitiesAlert() %} sf-toolbar-status-red{% endif %}">
+                {{ collector.countLazyLoadedEntities() }}
             </span>
         </div>
+        <div class="sf-toolbar-info-piece">
+            <b>Managed entit{% if collector.countManagedEntities() > 1 %}ies{% else %}y{% endif %}</b>
+            <span class="sf-toolbar-status{% if collector.countManagedEntities() >= collector.getManagedEntitiesAlert() %} sf-toolbar-status-red{% endif %}">
+                {{ collector.countManagedEntities() }}
+            </span>
+        </div>
+        {% if collector.isHydratorsOverloaded() %}
+            <div class="sf-toolbar-info-piece">
+                <b>Hydration time</b>
+                <span class="sf-toolbar-status{% if collector.getHydrationTotalTime() >= collector.getHydrationTimeAlert() %} sf-toolbar-status-red{% endif %}">
+                    {{ collector.getHydrationTotalTime() }} ms
+                </span>
+            </div>
+        {% endif %}
     {% endset %}
 
     {{ include('@WebProfiler/Profiler/toolbar_item.html.twig', { link: true }) }}
 {% endblock %}
 
+
 {% block menu %}
     {# This left-hand menu appears when using the full-screen profiler. #}
-    <span class="label{% if collector.countWarnings() > 0 %} label-status-warning{% endif %}">
+    <span class="label{% if collector.countWarnings() > 0 %} label-status-error{% endif %}">
         <span class="icon">{{ include('@Doctrine/Collector/icon.svg') }}</span>
-        <strong>Doctrine stats</strong>
-        {% if collector.countWarnings() > 0 %}
-            <span class="count">
-                <span>{{ collector.countWarnings() }}</span>
+        <strong>Statistics</strong>
+        <span class="count">
+            <span>
+                {{ collector.countLazyLoadedEntities() }} /
+                {{ collector.countManagedEntities() }}
             </span>
-        {% endif %}
+        </span>
     </span>
 {% endblock %}
 
@@ -65,6 +72,10 @@
     {{ parent() }}
 
     <style type="text/css">
+        body {
+            cursor: default;
+        }
+
         .metric-yellow {
             background-color: #A46A1F;
             color: white;
@@ -96,6 +107,20 @@
             margin: 0;
             white-space: pre-wrap;
         }
+
+        .alert-help {
+            padding: 10px;
+            margin-top: 15px;
+            background-color: #3f83cc;
+            color: white;
+            font-weight: bold;
+        }
+
+        .alert-help a,
+        .alert-help a:hover,
+        .alert-help a:visited {
+            color: white;
+        }
     </style>
 {% endblock %}
 
@@ -110,19 +135,40 @@
             <span class="value">{{ collector.countDifferentQueries() }}</span>
             <span class="label">Different quer{% if collector.countDifferentQueries() > 1 %}ies{% else %}y{% endif %}</span>
         </div>
-        <div class="metric{% if collector.countManagedEntities() >= collector.getManagedEntitiesAlert() %} metric-red{% endif %}">
-            <span class="value">{{ collector.countManagedEntities() }}</span>
-            <span class="label">Managed entities</span>
-        </div>
         <div class="metric{% if collector.countLazyLoadedEntities() >= collector.getLazyLoadedEntitiesAlert() %} metric-red{% endif %}">
             <span class="value">{{ collector.countLazyLoadedEntities() }}</span>
             <span class="label">Lazy loaded entities</span>
         </div>
-        <div class="metric{% if collector.getHydrationTotalTime() >= collector.getHydrationTimeAlert() %} metric-red{% endif %}">
-            <span class="value">{{ collector.getHydrationTotalTime() }}</span>
-            <span class="label">Hydration time (ms)</span>
+        <div class="metric{% if collector.countManagedEntities() >= collector.getManagedEntitiesAlert() %} metric-red{% endif %}">
+            <span class="value">{{ collector.countManagedEntities() }}</span>
+            <span class="label">Managed entities</span>
         </div>
+        {% if collector.isHydratorsOverloaded() %}
+            <div class="metric{% if collector.getHydrationTotalTime() >= collector.getHydrationTimeAlert() %} metric-red{% endif %}">
+                <span class="value">{{ collector.getHydrationTotalTime() }}</span>
+                <span class="label">
+                    Hydration time (ms)
+                </span>
+            </div>
+        {% endif %}
     </div>
+
+    {% if collector.isHydratorsOverloaded() == false %}
+        <div class="alert-help">
+            You can show hydration time, by configuring
+            <a href="https://github.com/steevanb/composer-overload-class" target="_blank">steevanb/composer-overload-class</a>
+            (<a href="https://github.com/steevanb/doctrine-stats/blob/master/README.md" target="_blank">view how to configure it</a>).
+        </div>
+    {% endif %}
+    {% if collector.showDoctrineHydrationHelp() %}
+        <div class="alert-help">
+            Doctrine hydration is extremely slow, and most of the time, useless if you do not save hydrated entities.
+            <br />
+            Consider using another hydration method, like $query->getArrayResult(), or
+            <a href="https://github.com/steevanb/doctrine-read-only-hydrator" target="_blank">steevanb/doctrine-read-only-hydrator</a>
+            to continue working with objects but almost 5x faster.
+        </div>
+    {% endif %}
 
     <h2>
         {{ collector.countQueries() }} quer{% if collector.countQueries() > 1 %}ies{% else %}y{% endif %}
@@ -140,9 +186,9 @@
             {% for sql,queries in collector.getQueries() %}
                 <tr>
                     <td>
-                            <span class="badge{% if queries.data|length >= 10 %} metric-red{% elseif queries.data|length > 1 %} metric-yellow{% endif %}">
-                                {{ queries.data|length }}
-                            </span>
+                        <span class="badge{% if queries.data|length >= 10 %} metric-red{% elseif queries.data|length > 1 %} metric-yellow{% endif %}">
+                            {{ queries.data|length }}
+                        </span>
                     </td>
                     <td class="nowrap">{{ '%0.2f'|format(queries.executionMS * 1000) }}&nbsp;ms</td>
                     <td>
@@ -258,23 +304,25 @@
         </tbody>
     </table>
 
-    <h2>
-        {{ collector.getHydrationTotalTime() }} ms hydration time
-    </h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Time</th>
-                <th>Hydrator</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for hydrator,time in collector.getHydrationTimes() %}
+    {% if collector.isHydratorsOverloaded() %}
+        <h2>
+            {{ collector.getHydrationTotalTime() }} ms hydration time
+        </h2>
+        <table>
+            <thead>
                 <tr>
-                    <td>{{ '%0.2f'|format(time) }} ms</td>
-                    <td>{{ hydrator }}</td>
+                    <th>Time</th>
+                    <th>Hydrator</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for hydrator,time in collector.getHydrationTimes() %}
+                    <tr>
+                        <td>{{ '%0.2f'|format(time) }} ms</td>
+                        <td>{{ hydrator }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
 {% endblock %}

@@ -17,10 +17,15 @@ class ObjectHydrator extends \ComposerOverloadClass\Doctrine\ORM\Internal\Hydrat
         return $this->_em;
     }
 
+    /**
+     * @return array
+     */
     protected function hydrateAllData()
     {
         $eventId = $this->dispatchPreHydrationEvent();
-        parent::hydrateAllData();
+        $return = parent::hydrateAllData();
         $this->dispatchPostHydrationEvent($eventId);
+
+        return $return;
     }
 }
