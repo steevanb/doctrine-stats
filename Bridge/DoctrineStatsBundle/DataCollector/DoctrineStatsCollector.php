@@ -6,11 +6,12 @@ use Doctrine\DBAL\Logging\DebugStack;
 use Doctrine\DBAL\Logging\SQLLogger;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Internal\Hydration\ObjectHydrator;
+use steevanb\DoctrineStats\Bridge\DoctrineCollectorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
 
-class DoctrineStatsCollector extends DataCollector
+class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorInterface
 {
     /** @var array */
     protected $lazyLoadedEntities = [];
