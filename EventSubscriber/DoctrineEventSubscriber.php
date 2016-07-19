@@ -1,12 +1,12 @@
 <?php
 
-namespace steevanb\DoctrineStats\Bridge\Symfony3DoctrineStatsBundle\EventSubscriber;
+namespace steevanb\DoctrineStats\EventSubscriber;
 
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
 use Doctrine\ORM\Proxy\Proxy;
-use steevanb\DoctrineStats\Bridge\Symfony3DoctrineStatsBundle\DataCollector\DoctrineStatsCollector;
+use steevanb\DoctrineStats\Bridge\DoctrineCollectorInterface;
 use steevanb\DoctrineStats\Doctrine\ORM\Event\PostHydrationEventArgs;
 use steevanb\DoctrineStats\Doctrine\ORM\Event\PostLazyLoadEventArgs;
 use steevanb\DoctrineStats\Doctrine\ORM\Event\PreHydrationEventArgs;
@@ -19,12 +19,15 @@ class DoctrineEventSubscriber implements EventSubscriber
     /** @var float */
     protected $preHydrationTime;
 
+    /** @var DoctrineCollectorInterface  */
+    protected $collector;
+
     /**
-     * @param DoctrineStatsCollector $doctrineStatsCollector
+     * @param DoctrineCollectorInterface $collector
      */
-    public function __construct(DoctrineStatsCollector $doctrineStatsCollector)
+    public function __construct(DoctrineCollectorInterface $collector)
     {
-        $this->doctrineStatsCollector = $doctrineStatsCollector;
+        $this->collector = $collector;
     }
 
     /**
@@ -46,7 +49,7 @@ class DoctrineEventSubscriber implements EventSubscriber
     public function postLazyLoading(PostLazyLoadEventArgs $eventArgs)
     {
         $this
-            ->doctrineStatsCollector
+            ->collector
             ->addLazyLoadedEntity($eventArgs->getEntityManager(), $eventArgs->getProxy());
     }
 
@@ -68,7 +71,7 @@ class DoctrineEventSubscriber implements EventSubscriber
     {
         if ($this->preHydrationEventId === $eventArgs->getPreHydrationEventId()) {
             $postHydrationTime = microtime(true);
-            $this->doctrineStatsCollector->addHydrationTime(
+            $this->collector->addHydrationTime(
                 $eventArgs->getHydratorClassName(),
                 ($postHydrationTime - $this->preHydrationTime) * 1000
             );
@@ -91,6 +94,6 @@ class DoctrineEventSubscriber implements EventSubscriber
         $identifiers = $metaData->getIdentifierValues($eventArgs->getEntity());
         $identifiersStr = implode(', ', $identifiers);
 
-        $this->doctrineStatsCollector->addManagedEntity($className, $identifiersStr);
+        $this->collector->addManagedEntity($className, $identifiersStr);
     }
 }

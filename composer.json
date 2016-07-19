@@ -6,7 +6,8 @@
     "autoload": {
         "psr-4": {
             "steevanb\\DoctrineStats\\Bridge\\": "Bridge",
-            "steevanb\\DoctrineStats\\Doctrine\\": "Doctrine"
+            "steevanb\\DoctrineStats\\Doctrine\\": "Doctrine",
+            "steevanb\\DoctrineStats\\EventSubscriber\\": "EventSubscriber"
         }
     },
     "require": {

@@ -1,17 +1,17 @@
 services:
     doctrine_stats.data_collector.stats:
-        class: steevanb\DoctrineStats\Bridge\Symfony3DoctrineStatsBundle\DataCollector\DoctrineStatsCollector
+        class: steevanb\DoctrineStats\Bridge\DoctrineStatsBundle\DataCollector\DoctrineStatsCollector
         arguments: [ '@doctrine.dbal.logger.profiling.default' ]
         public: false
         tags:
             -
                 name: data_collector
                 id: doctrine_stats
-                template: 'Symfony3DoctrineStatsBundle:DataCollector:template.html.twig'
+                template: 'DoctrineStatsBundle:DataCollector:template.html.twig'
                 priority: 249
 
     doctrine_stats.event_subscriber.doctrine:
-        class: steevanb\DoctrineStats\Bridge\Symfony3DoctrineStatsBundle\EventSubscriber\DoctrineEventSubscriber
+        class: steevanb\DoctrineStats\EventSubscriber\DoctrineEventSubscriber
         arguments: [ '@doctrine_stats.data_collector.stats' ]
         tags:
             - { name: doctrine.event_subscriber }

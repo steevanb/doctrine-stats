@@ -162,11 +162,12 @@
     {% endif %}
     {% if collector.showDoctrineHydrationHelp() %}
         <div class="alert-help">
-            Doctrine hydration is extremely slow, and most of the time, useless if you do not save hydrated entities.
+            Doctrine hydration is extremely slow (25x to 100x slowest than SQL request), and most of the time,
+            useless if you do not save hydrated entities.
             <br />
-            Consider using another hydration method, like $query->getArrayResult(), or
+            Consider using another hydration method, like $query->getArrayResult() (8x faster than $query->getResult()), or
             <a href="https://github.com/steevanb/doctrine-read-only-hydrator" target="_blank">steevanb/doctrine-read-only-hydrator</a>
-            to continue working with objects but almost 5x faster.
+            to continue working with objects but almost 5x faster than Doctrine Hydration.
         </div>
     {% endif %}
 

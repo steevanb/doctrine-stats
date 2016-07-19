@@ -1,6 +1,6 @@
 <?php
 
-namespace steevanb\DoctrineStats\Bridge\Symfony3DoctrineStatsBundle\DataCollector;
+namespace steevanb\DoctrineStats\Bridge\DoctrineStatsBundle\DataCollector;
 
 use Doctrine\DBAL\Logging\DebugStack;
 use Doctrine\DBAL\Logging\SQLLogger;
