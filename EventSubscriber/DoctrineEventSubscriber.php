@@ -46,7 +46,7 @@ class DoctrineEventSubscriber implements EventSubscriber
     /**
      * @param PostLazyLoadEventArgs $eventArgs
      */
-    public function postLazyLoading(PostLazyLoadEventArgs $eventArgs)
+    public function postLazyLoad(PostLazyLoadEventArgs $eventArgs)
     {
         $this
             ->collector
