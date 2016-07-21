@@ -143,12 +143,21 @@
             <span class="value">{{ collector.countManagedEntities() }}</span>
             <span class="label">Managed entities</span>
         </div>
+        <div class="metric">
+            <span class="value">{{ collector.getQueriesTime() }}</span>
+            <span class="label">Queries time (ms)</span>
+        </div>
         {% if collector.isHydratorsOverloaded() %}
             <div class="metric{% if collector.getHydrationTotalTime() >= collector.getHydrationTimeAlert() %} metric-red{% endif %}">
                 <span class="value">{{ collector.getHydrationTotalTime() }}</span>
                 <span class="label">
                     Hydration time (ms)
                 </span>
+            </div>
+
+            <div class="metric">
+                <span class="value">{{ collector.getDoctrineTime() }}</span>
+                <span class="label">Total time (ms)</span>
             </div>
         {% endif %}
     </div>
@@ -191,7 +200,7 @@
                             {{ queries.data|length }}
                         </span>
                     </td>
-                    <td class="nowrap">{{ '%0.2f'|format(queries.executionMS * 1000) }}&nbsp;ms</td>
+                    <td class="nowrap">{{ '%0.2f'|format(queries.executionMS) }}&nbsp;ms</td>
                     <td>
                         <div>{{ sql|doctrine_pretty_query(highlight_only = true) }}</div>
 

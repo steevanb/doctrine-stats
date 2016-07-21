@@ -191,7 +191,7 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
                 if (array_key_exists($query['sql'], $return) === false) {
                     $return[$query['sql']] = array('executionMS' => 0, 'data' => array());
                 }
-                $return[$query['sql']]['executionMS'] += $query['executionMS'];
+                $return[$query['sql']]['executionMS'] += $query['executionMS'] * 1000;
                 $return[$query['sql']]['data'][] = array(
                     'params' => $query['params']
                 );
@@ -211,6 +211,19 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
     public function countQueries()
     {
         return count($this->data['queries']);
+    }
+
+    /**
+     * @return float
+     */
+    public function getQueriesTime()
+    {
+        $return = 0;
+        foreach ($this->getQueries() as $query) {
+            $return += $query['executionMS'];
+        }
+
+        return round($return, 2);
     }
 
     /**
@@ -309,6 +322,14 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
     public function getHydrationTimes()
     {
         return $this->data['hydrationTimes'];
+    }
+
+    /**
+     * @return float
+     */
+    public function getDoctrineTime()
+    {
+        return round($this->getQueriesTime() + $this->getHydrationTotalTime(), 2);
     }
 
     /**
