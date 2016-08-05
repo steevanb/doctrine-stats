@@ -1,9 +1,9 @@
-[![version](https://img.shields.io/badge/version-1.0.0-green.svg)](https://github.com/steevanb/doctrine-stats/tree/1.0.0)
+[![version](https://img.shields.io/badge/version-1.0.1-green.svg)](https://github.com/steevanb/doctrine-stats/tree/1.0.1)
 [![doctrine](https://img.shields.io/badge/doctrine/orm-^2.4-blue.svg)](http://www.doctrine-project.org)
 [![php](https://img.shields.io/badge/php->= 5.4-blue.svg)](http://www.doctrine-project.org)
-![Lines](https://img.shields.io/badge/code lines-1386-green.svg)
+![Lines](https://img.shields.io/badge/code lines-1446-green.svg)
 ![Total Downloads](https://poser.pugx.org/steevanb/doctrine-stats/downloads)
-[![SensionLabsInsight](https://img.shields.io/badge/SensionLabsInsight-platinum-brightgreen.svg)](https://insight.sensiolabs.com/projects/884a7b62-bb7a-41dc-8198-6d2bb0694795/analyses/2)
+[![SensionLabsInsight](https://img.shields.io/badge/SensionLabsInsight-platinum-brightgreen.svg)](https://insight.sensiolabs.com/projects/884a7b62-bb7a-41dc-8198-6d2bb0694795/analyses/3)
 [![Scrutinizer](https://scrutinizer-ci.com/g/steevanb/doctrine-stats/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/steevanb/doctrine-stats/)
 
 doctrine-stats

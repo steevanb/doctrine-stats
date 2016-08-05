@@ -94,6 +94,8 @@ class DoctrineEventSubscriber implements EventSubscriber
         $identifiers = $metaData->getIdentifierValues($eventArgs->getEntity());
         $identifiersStr = implode(', ', $identifiers);
 
-        $this->collector->addManagedEntity($className, $identifiersStr);
+        if ($eventArgs->getEntityManager()->getUnitOfWork()->isInIdentityMap($eventArgs->getEntity())) {
+            $this->collector->addManagedEntity($className, $identifiersStr);
+        }
     }
 }

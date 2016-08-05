@@ -1,3 +1,8 @@
+1.0.1 (2016-07-05)
+------------------
+
+- Fix DoctrineEventSubscriber::postLoad() call to addManagedEntity(), only managed entities will trigger this call
+
 1.0.0 (2016-07-21)
 ------------------
 
