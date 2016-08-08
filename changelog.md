@@ -1,4 +1,10 @@
-1.0.1 (2016-07-05)
+1.0.2 (2016-08-08)
+------------------
+
+- Add queries time in Symfony WebProfiler
+- Add queries time percent and hydration time percent in Symfony WebProfiler
+
+1.0.1 (2016-08-05)
 ------------------
 
 - Fix DoctrineEventSubscriber::postLoad() call to addManagedEntity(), only managed entities will trigger this call

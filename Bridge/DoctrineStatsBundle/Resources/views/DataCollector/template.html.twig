@@ -39,11 +39,19 @@
                 {{ collector.countLazyLoadedEntities() }}
             </span>
         </div>
+        <div class="sf-toolbar-info-piece">
+            <b>Queries time</b>
+            <span class="sf-toolbar-status">
+                {{ collector.getQueriesTime() }} ms
+                ({{ collector.getQueriesTimePercent() }}%)
+            </span>
+        </div>
         {% if collector.isHydratorsOverloaded() %}
             <div class="sf-toolbar-info-piece">
                 <b>Hydration time</b>
                 <span class="sf-toolbar-status{% if collector.getHydrationTotalTime() >= collector.getHydrationTimeAlert() %} sf-toolbar-status-red{% endif %}">
                     {{ collector.getHydrationTotalTime() }} ms
+                    ({{ collector.getHydrationTimePercent() }}%)
                 </span>
             </div>
 
@@ -152,13 +160,13 @@
         </div>
         <div class="metric">
             <span class="value">{{ collector.getQueriesTime() }}</span>
-            <span class="label">Queries time (ms)</span>
+            <span class="label">Queries time ({{ collector.getQueriesTimePercent() }}%)</span>
         </div>
         {% if collector.isHydratorsOverloaded() %}
             <div class="metric{% if collector.getHydrationTotalTime() >= collector.getHydrationTimeAlert() %} metric-red{% endif %}">
                 <span class="value">{{ collector.getHydrationTotalTime() }}</span>
                 <span class="label">
-                    Hydration time (ms)
+                    Hydration time ({{ collector.getHydrationTimePercent() }}%)
                 </span>
             </div>
 
@@ -190,6 +198,7 @@
     <h2>
         {{ collector.countQueries() }} quer{% if collector.countQueries() > 1 %}ies{% else %}y{% endif %}
         ({{ collector.countDifferentQueries() }} different{% if collector.countDifferentQueries() > 1 %}s{% endif %})
+        ({{ collector.getQueriesTimePercent() }}%)
     </h2>
     <table>
         <thead>
@@ -324,6 +333,7 @@
     {% if collector.isHydratorsOverloaded() %}
         <h2>
             {{ collector.getHydrationTotalTime() }} ms hydration time
+            ({{ collector.getHydrationTimePercent() }}%)
         </h2>
         <table>
             <thead>

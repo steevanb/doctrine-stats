@@ -229,6 +229,14 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
     /**
      * @return int
      */
+    public function getQueriesTimePercent()
+    {
+        return round(($this->getQueriesTime() * 100) / $this->getDoctrineTime());
+    }
+
+    /**
+     * @return int
+     */
     public function countDifferentQueries()
     {
         return count($this->getQueries());
@@ -322,6 +330,14 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
     public function getHydrationTimes()
     {
         return $this->data['hydrationTimes'];
+    }
+
+    /**
+     * @return int
+     */
+    public function getHydrationTimePercent()
+    {
+        return round(($this->getHydrationTotalTime() * 100) / $this->getDoctrineTime());
     }
 
     /**
