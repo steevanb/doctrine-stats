@@ -1,3 +1,8 @@
+1.0.3 (2016-08-10)
+------------------
+
+- Fix division by zero in DoctrineStatsCollector::getHydrationTimePercent() and getQueriesTimePercent()
+
 1.0.2 (2016-08-08)
 ------------------
 
