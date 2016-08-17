@@ -22,8 +22,16 @@ interface DoctrineCollectorInterface
 
     /**
      * @param string $className
-     * @param string $identifiers
+     * @param array $identifiers
      * @return $this
      */
-    public function addManagedEntity($className, $identifiers);
+    public function addManagedEntity($className, array $identifiers);
+
+    /**
+     * @param string $hydratorClassName
+     * @param string $className
+     * @param array $classIdentifiers
+     * @return $this
+     */
+    public function addHydratedEntity($hydratorClassName, $className, $classIdentifiers);
 }

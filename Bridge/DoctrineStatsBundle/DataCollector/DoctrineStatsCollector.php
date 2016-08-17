@@ -37,6 +37,9 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
     /** @var int */
     protected $hydrationTimeAlert = 5;
 
+    /** @var array */
+    protected $hydratedEntities = [];
+
     /**
      * @param DebugStack $sqlLogger
      */
@@ -131,15 +134,15 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
 
     /**
      * @param string $className
-     * @param string $identifiers
+     * @param array $identifiers
      * @return $this
      */
-    public function addManagedEntity($className, $identifiers)
+    public function addManagedEntity($className, array $identifiers)
     {
         if (array_key_exists($className, $this->managedEntities) === false) {
             $this->managedEntities[$className] = array();
         }
-        $this->managedEntities[$className][] = $identifiers;
+        $this->managedEntities[$className][] = $this->identifiersAsString($identifiers);
 
         return $this;
     }
@@ -160,6 +163,26 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
     }
 
     /**
+     * @param string $hydratorClassName
+     * @param string $className
+     * @param array $classIdentifiers
+     * @return $this
+     */
+    public function addHydratedEntity($hydratorClassName, $className, $classIdentifiers)
+    {
+        if (array_key_exists($hydratorClassName, $this->hydratedEntities) === false) {
+            $this->hydratedEntities[$hydratorClassName] = [];
+        }
+        if (array_key_exists($className, $this->hydratedEntities[$hydratorClassName]) === false) {
+            $this->hydratedEntities[$hydratorClassName][$className] = [];
+        }
+
+        $this->hydratedEntities[$hydratorClassName][$className][] = $this->identifiersAsString($classIdentifiers);
+
+        return $this;
+    }
+
+    /**
      * @param Request $request
      * @param Response $response
      * @param \Exception|null $exception
@@ -174,7 +197,8 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
             'queriesAlert' => $this->queriesAlert,
             'managedEntitiesAlert' => $this->managedEntitiesAlert,
             'lazyLoadedEntitiesAlert' => $this->lazyLoadedEntitiesAlert,
-            'hydrationTimeAlert' => $this->hydrationTimeAlert
+            'hydrationTimeAlert' => $this->hydrationTimeAlert,
+            'hydratedEntities' => $this->hydratedEntities
         );
     }
 
@@ -425,10 +449,37 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
     }
 
     /**
+     * @param string $hydratorClassName
+     * @return array
+     */
+    public function getHydratedEntities($hydrator)
+    {
+        return array_key_exists($hydrator, $this->data['hydratedEntities'])
+            ? $this->data['hydratedEntities'][$hydrator]
+            : [];
+    }
+
+    /**
+     * @param string $hydrator
+     * @return int
+     */
+    public function countHydratedEntities($hydrator)
+    {
+        $count = 0;
+        foreach ($this->getHydratedEntities($hydrator) as $classes) {
+            foreach ($classes as $identifiers) {
+                $count += count($identifiers);
+            }
+        }
+
+        return $count;
+    }
+
+    /**
      * @param $fullyClassifiedClassName
      * @return array
      */
-    protected function explodeClassParts($fullyClassifiedClassName)
+    public function explodeClassParts($fullyClassifiedClassName)
     {
         $posBackSlash = strrpos($fullyClassifiedClassName, '\\');
 
@@ -436,5 +487,36 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
             'namespace' => substr($fullyClassifiedClassName, 0, $posBackSlash),
             'className' => substr($fullyClassifiedClassName, $posBackSlash + 1)
         );
+    }
+
+    /**
+     * @param array $identifiers
+     * @return array
+     */
+    public function mergeIdentifiers(array $identifiers)
+    {
+        $return = [];
+        foreach ($identifiers as $identifier) {
+            if (array_key_exists($identifier, $return) === false) {
+                $return[$identifier] = 0;
+            }
+            $return[$identifier]++;
+        }
+
+        return $return;
+    }
+
+    /**
+     * @param array $identifiers
+     * @return string
+     */
+    protected function identifiersAsString(array $identifiers)
+    {
+        $return = [];
+        foreach ($identifiers as $name => $value) {
+            $return[] = $name . ': ' . $value;
+        }
+
+        return implode(', ', $return);
     }
 }
