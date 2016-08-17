@@ -15,4 +15,3 @@ services:
         arguments: [ '@doctrine_stats.data_collector.stats' ]
         tags:
             - { name: doctrine.event_subscriber }
-            - { name: monolog.logger, channel: doctrine }
