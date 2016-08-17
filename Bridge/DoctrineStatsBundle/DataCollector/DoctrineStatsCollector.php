@@ -449,7 +449,7 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
     }
 
     /**
-     * @param string $hydratorClassName
+     * @param string $hydrator
      * @return array
      */
     public function getHydratedEntities($hydrator)
