@@ -11,7 +11,7 @@
         }
     },
     "require": {
-        "php": ">=5.4.0",
+        "php" : "^5.4.0 || ^7.0",
         "doctrine/orm": "^2.4.8",
         "steevanb/composer-overload-class": "^1.0"
     },
