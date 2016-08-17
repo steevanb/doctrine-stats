@@ -136,10 +136,16 @@
         .alert-help a:visited {
             color: white;
         }
+
+        tr.hydrated-entities td {
+            background-color: #ededed;
+        }
     </style>
 {% endblock %}
 
 {% block panel %}
+    {% import _self as self %}
+
     <h2>Doctrine statistics</h2>
     <div class="metrics">
         <div class="metric{% if collector.countQueries() >= collector.getQueriesAlert() %} metric-red{% endif %}">
@@ -222,10 +228,10 @@
 
                         <div class="text-small font-normal">
                             <a
-                                    class="link-inverse sf-toggle"
-                                    data-toggle-selector="#query-parameters-{{ loop.index }}"
-                                    data-toggle-alt-content="Hide parameters"
-                                    >
+                                class="link-inverse sf-toggle"
+                                data-toggle-selector="#query-parameters-{{ loop.index }}"
+                                data-toggle-alt-content="Hide parameters"
+                            >
                                 Show parameters
                             </a>
 
@@ -243,12 +249,16 @@
         </tbody>
     </table>
 
-    <h2>{{ collector.countManagedEntities() }} managed entit{% if collector.countManagedEntities() > 1 %}ies{% else %}y{% endif %}</h2>
+    <h2>
+        {{ collector.countManagedEntities() }}
+        managed entit{% if collector.countManagedEntities() > 1 %}ies{% else %}y{% endif %}
+    </h2>
     <table>
         <thead>
             <tr>
                 <th>Count</th>
                 <th>Entity</th>
+                <th>Identifiers</th>
             </tr>
         </thead>
         <tbody>
@@ -256,24 +266,20 @@
                 <tr>
                     <td>{{ identifiers|length }}</td>
                     <td>
-                        <div>{{ className }}</div>
+                        {{ self.className(collector.explodeClassParts(className)) }}
 
-                        <div class="text-small font-normal">
-                            <a
-                                class="link-inverse sf-toggle"
-                                data-toggle-selector="#managed-entities-{{ loop.index }}"
-                                data-toggle-alt-content="Hide identifiers"
-                            >
-                                Show identifiers
-                            </a>
-
-                            <div id="managed-entities-{{ loop.index }}">
-                                {% for identifier in identifiers %}
-                                    {{ identifier }}
-                                    <br />
-                                {% endfor %}
-                            </div>
+                        <div id="managed-entities-{{ loop.index }}">
+                            {{ self.identifiers(collector, identifiers) }}
                         </div>
+                    </td>
+                    <td>
+                        <a
+                            class="link-inverse sf-toggle"
+                            data-toggle-selector="#managed-entities-{{ loop.index }}"
+                            data-toggle-alt-content="Hide identifier{% if identifiers|length > 1 %}s{% endif %}"
+                        >
+                            Show identifier{% if identifiers|length > 1 %}s{% endif %}
+                        </a>
                     </td>
                 </tr>
             {% endfor %}
@@ -308,9 +314,9 @@
                     </td>
                     <td>
                         <a
-                        class="link-inverse sf-toggle"
-                        data-toggle-selector="#lazy-loaded-entity-{{ loop.index }}"
-                        data-toggle-alt-content="Hide associations"
+                            class="link-inverse sf-toggle"
+                            data-toggle-selector="#lazy-loaded-entity-{{ loop.index }}"
+                            data-toggle-alt-content="Hide association{% if lazyLoadedEntity.associations|length > 1 %}s{% endif %}"
                         >
                             Show {{ lazyLoadedEntity.associations|length }}
                             association{% if lazyLoadedEntity.associations|length > 1 %}s{% endif %}
@@ -318,9 +324,7 @@
 
                         <div id="lazy-loaded-entity-{{ loop.index }}">
                             {% for association in lazyLoadedEntity.associations %}
-                                <span class="text-muted">{{ association.namespace }}\</span
-                                ><span class="text-bold">{{ association.className }}</span
-                                ><span class="text-muted">::${{ association.field }}</span>
+                                {{ self.className(association) }}<span class="text-muted">::${{ association.field }}</span>
                                 <br />
                             {% endfor %}
                         </div>
@@ -340,16 +344,61 @@
                 <tr>
                     <th>Time</th>
                     <th>Hydrator</th>
+                    <th>Entities</th>
                 </tr>
             </thead>
             <tbody>
                 {% for hydrator,time in collector.getHydrationTimes() %}
+                    {% set countHydratedEntities = collector.countHydratedEntities(hydrator) %}
                     <tr>
                         <td>{{ '%0.2f'|format(time) }} ms</td>
-                        <td>{{ hydrator }}</td>
+                        <td>
+                            {{ self.className(collector.explodeClassParts(hydrator)) }}
+                            {% if countHydratedEntities > 0 %}
+                                <div id="hydrated-entities-{{ loop.index }}">
+                                    {% for className,identifiers in collector.getHydratedEntities(hydrator) %}
+                                        {{ self.className(collector.explodeClassParts(className)) }}[{{ identifiers|length }}]
+                                        <br />
+                                        {{ self.identifiers(collector, identifiers) }}
+                                        <br />
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if countHydratedEntities > 0 %}
+                                <a
+                                    class="link-inverse sf-toggle"
+                                    data-toggle-selector="#hydrated-entities-{{ loop.index }}"
+                                    data-toggle-alt-content="Hide hydrated entit{% if countHydratedEntities > 1 %}ies{% else %}y{% endif %}"
+                                >
+                                    Show {{ countHydratedEntities }}
+                                    entit{% if countHydratedEntities > 1 %}ies{% else %}y{% endif %}
+                                </a>
+                            {% endif %}
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
     {% endif %}
 {% endblock %}
+
+{% macro className(classNameParts) %}
+    {% spaceless %}
+        <span class="text-muted">{{ classNameParts.namespace }}\</span>
+        <span class="text-bold">{{ classNameParts.className }}</span>
+    {% endspaceless %}
+{% endmacro %}
+
+{% macro identifiers(collector, identifiers) %}
+    {% for identifier,count in collector.mergeIdentifiers(identifiers) %}
+        {{ identifier }}
+        {% if count > 1 %}
+            ({{ count }}x)
+        {% endif %}
+        {% if loop.last == false %}
+            <br />
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
