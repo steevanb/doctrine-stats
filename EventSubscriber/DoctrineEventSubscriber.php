@@ -46,13 +46,23 @@ class DoctrineEventSubscriber implements EventSubscriber
     }
 
     /**
+     * @param PreLazyLoadEventArgs $eventArgs
+     */
+    public function preLazyLoad(PreLazyLoadEventArgs $eventArgs)
+    {
+        $this
+            ->collector
+            ->addLazyLoadedEntity($eventArgs->getEntityManager(), $eventArgs->getEntity());
+    }
+
+    /**
      * @param PostLazyLoadEventArgs $eventArgs
      */
     public function postLazyLoad(PostLazyLoadEventArgs $eventArgs)
     {
         $this
             ->collector
-            ->addLazyLoadedEntity($eventArgs->getEntityManager(), $eventArgs->getProxy());
+            ->addLazyLoadedEntity($eventArgs->getEntityManager(), $eventArgs->getEntity());
     }
 
     /**

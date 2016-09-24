@@ -2,17 +2,23 @@
 
 namespace steevanb\DoctrineStats\Doctrine\ORM\Event;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 
 trait HydrationEventsTrait
 {
+    /**
+     * @return EntityManagerInterface
+     */
+    abstract protected function getEntityManager();
+
     /**
      * @return string
      */
     protected function dispatchPreHydrationEvent()
     {
         $eventArgs = new PreHydrationEventArgs(get_class($this));
-        $this->_em->getEventManager()->dispatchEvent(PreHydrationEventArgs::EVENT_NAME, $eventArgs);
+        $this->getEntityManager()->getEventManager()->dispatchEvent(PreHydrationEventArgs::EVENT_NAME, $eventArgs);
 
         return $eventArgs->getEventId();
     }
@@ -24,7 +30,7 @@ trait HydrationEventsTrait
     protected function dispatchPostHydrationEvent($preHydrationEventId)
     {
         $eventArgs = new PostHydrationEventArgs($preHydrationEventId, get_class($this));
-        $this->_em->getEventManager()->dispatchEvent(PostHydrationEventArgs::EVENT_NAME, $eventArgs);
+        $this->getEntityManager()->getEventManager()->dispatchEvent(PostHydrationEventArgs::EVENT_NAME, $eventArgs);
 
         return $this;
     }
@@ -44,7 +50,7 @@ trait HydrationEventsTrait
         }
 
         $eventArgs = new PostCreateEntityEventArgs(get_class($this), $classMetaData->name, $identifiers);
-        $this->_em->getEventManager()->dispatchEvent(PostCreateEntityEventArgs::EVENT_NAME, $eventArgs);
+        $this->getEntityManager()->getEventManager()->dispatchEvent(PostCreateEntityEventArgs::EVENT_NAME, $eventArgs);
 
         return $this;
     }

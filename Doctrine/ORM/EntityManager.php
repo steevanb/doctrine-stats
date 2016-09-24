@@ -56,15 +56,27 @@ class EntityManager extends DoctrineEntityManager
     {
         parent::__construct($conn, $config, $eventManager);
 
-        // Can't change Doctrine\ORM\EntityManager::$proxyFactory to use mine, so, use Reflection
-        $reflectionProperty = new \ReflectionProperty(get_parent_class($this), 'proxyFactory');
-        $reflectionProperty->setAccessible(true);
-        $reflectionProperty->setValue($this, new ProxyFactory(
+        $this->setParentPrivatePropertyValue('proxyFactory', new ProxyFactory(
             $this,
             $config->getProxyDir(),
             $config->getProxyNamespace(),
             $config->getAutoGenerateProxyClasses()
         ));
+        $this->setParentPrivatePropertyValue('unitOfWork', new UnitOfWork($this));
+    }
+
+    /**
+     * @param string $name
+     * @param mixed $value
+     * @return $this
+     */
+    protected function setParentPrivatePropertyValue($name, $value)
+    {
+        $reflectionProperty = new \ReflectionProperty(get_parent_class($this), $name);
+        $reflectionProperty->setAccessible(true);
+        $reflectionProperty->setValue($this, $value);
         $reflectionProperty->setAccessible(false);
+
+        return $this;
     }
 }

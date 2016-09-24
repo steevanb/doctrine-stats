@@ -13,16 +13,22 @@ class PostLazyLoadEventArgs extends EventArgs
     /** @var EntityManagerInterface */
     protected $entityManager;
 
-    /** @var Proxy */
-    protected $proxy;
+    /** @var object */
+    protected $entity;
+
+    /** @var string */
+    protected $preLazyLoadEventId;
 
     /**
-     * @param Proxy $proxy
+     * @param EntityManagerInterface $entityManager
+     * @param object $entity
+     * @param string $preLazyLoadEventId
      */
-    public function __construct(EntityManagerInterface $entityManager, Proxy $proxy)
+    public function __construct(EntityManagerInterface $entityManager, $entity, $preLazyLoadEventId)
     {
         $this->entityManager = $entityManager;
-        $this->proxy = $proxy;
+        $this->entity = $entity;
+        $this->preLazyLoadEventId = $preLazyLoadEventId;
     }
 
     /**
@@ -36,8 +42,16 @@ class PostLazyLoadEventArgs extends EventArgs
     /**
      * @return Proxy
      */
-    public function getProxy()
+    public function getEntity()
     {
-        return $this->proxy;
+        return $this->entity;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPreLazyLoadEventId()
+    {
+        return $this->preLazyLoadEventId;
     }
 }

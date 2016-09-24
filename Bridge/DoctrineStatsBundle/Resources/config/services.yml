@@ -15,3 +15,7 @@ services:
         arguments: [ '@doctrine_stats.data_collector.stats' ]
         tags:
             - { name: doctrine.event_subscriber }
+
+    doctrine_stats.logging.sql:
+        class: steevanb\DoctrineStats\Doctrine\DBAL\Logging\SqlLogger
+        public: false

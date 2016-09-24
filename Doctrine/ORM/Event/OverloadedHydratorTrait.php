@@ -2,9 +2,19 @@
 
 namespace steevanb\DoctrineStats\Doctrine\ORM\Event;
 
+use Doctrine\ORM\EntityManagerInterface;
+
 trait OverloadedHydratorTrait
 {
     use HydrationEventsTrait;
+
+    /**
+     * @return EntityManagerInterface
+     */
+    protected function getEntityManager()
+    {
+        return $this->_em;
+    }
 
     /**
      * @param object $stmt
