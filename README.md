@@ -1,5 +1,5 @@
 [![version](https://img.shields.io/badge/version-1.1.0-green.svg)](https://github.com/steevanb/doctrine-stats/tree/1.1.0)
-[![doctrine](https://img.shields.io/badge/doctrine/orm-^2.4-blue.svg)](http://www.doctrine-project.org)
+[![doctrine](https://img.shields.io/badge/doctrine/orm-^2.4.8-blue.svg)](http://www.doctrine-project.org)
 [![php](https://img.shields.io/badge/php-^5.4.6 || ^7.0-blue.svg)](http://www.php.net)
 ![Lines](https://img.shields.io/badge/code lines-1728-green.svg)
 ![Total Downloads](https://poser.pugx.org/steevanb/doctrine-stats/downloads)

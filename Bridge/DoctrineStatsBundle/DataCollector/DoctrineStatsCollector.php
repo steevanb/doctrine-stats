@@ -222,11 +222,13 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
                         'data' => [],
                         'lazyLoadedEntities' => [],
                         'hydrationTime' => 0,
-                        'hydrationTimePercent' => 0
+                        'hydrationTimePercent' => 0,
                     ];
                 }
                 $return[$query['sql']]['queryTime'] += $query['time'] * 1000;
                 $return[$query['sql']]['data'][] = ['params' => $query['params']];
+                $return[$query['sql']]['backtraces'][$index] =
+                    $query['backtrace'] === null ? null : \DumpBacktrace::getDump($query['backtrace']);
 
                 foreach ($this->data['lazyLoadedEntities'] as $lazyLoadedEntity) {
                     if ($lazyLoadedEntity['queryIndex'] === $index) {

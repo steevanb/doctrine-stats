@@ -265,6 +265,16 @@
                                 </a>
                             {% endif %}
 
+                            {% set queryIndex = loop.index %}
+                            {% for backtrace in queries.backtraces %}
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <a
+                                    class="link-inverse sf-toggle"
+                                    data-toggle-selector="#query-backtraces-{{ queryIndex }}-{{ loop.index }}"
+                                    data-toggle-alt-content="Hide backtrace #{{ loop.index }}"
+                                >Show backtrace #{{ loop.index }}</a>
+                            {% endfor %}
+
                             <div id="query-parameters-{{ loop.index }}">
                                 {% for query in queries.data %}
                                     <span class="text-bold">#{{ loop.index }}</span>
@@ -287,6 +297,16 @@
                                     {% endfor %}
                                 </div>
                             {% endif %}
+
+                            {% for backtrace in queries.backtraces %}
+                                <div id="query-backtraces-{{ queryIndex }}-{{ loop.index }}">
+                                    {% if backtrace is null %}
+                                        No backtrace informations available. Set doctrine_stats.query_backtrace to true to enable it.
+                                    {% else %}
+                                        {{ backtrace|raw }}
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
                         </div>
                     </td>
                 </tr>

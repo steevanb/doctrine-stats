@@ -4,7 +4,6 @@ namespace steevanb\DoctrineStats\Bridge\DoctrineStatsBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
-use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader;
 
@@ -18,7 +17,7 @@ class DoctrineStatsExtension extends Extension
     {
         $this
             ->loadServices($container)
-            ->addSqlLogger($container);
+            ->loadConfigs($configs, $container);
     }
 
     /**
@@ -34,15 +33,16 @@ class DoctrineStatsExtension extends Extension
     }
 
     /**
+     * @param array $configs
      * @param ContainerBuilder $container
      * @return $this
      */
-    protected function addSqlLogger(ContainerBuilder $container)
+    protected function loadConfigs(array $configs, ContainerBuilder $container)
     {
-//        d('test 1');
-//        $container
-//            ->getDefinition('data_collector.doctrine')
-//            ->addMethodCall('addLogger', ['default', new Reference('doctrine_stats.logging.sql')]);
+        $configuration = new Configuration();
+        $config = $this->processConfiguration($configuration, $configs);
+        $sqlLogger = $container->getDefinition('doctrine_stats.logger.sql');
+        $sqlLogger->addMethodCall('setBacktraceEnabled', [$config['query_backtrace']]);
 
         return $this;
     }
