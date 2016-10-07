@@ -1,7 +1,7 @@
 services:
     doctrine_stats.data_collector.stats:
         class: steevanb\DoctrineStats\Bridge\DoctrineStatsBundle\DataCollector\DoctrineStatsCollector
-        arguments: [ '@doctrine.dbal.logger.profiling.default' ]
+        arguments: [ '@doctrine_stats.logger.sql' ]
         public: false
         tags:
             -
@@ -16,6 +16,6 @@ services:
         tags:
             - { name: doctrine.event_subscriber }
 
-    doctrine_stats.logging.sql:
-        class: steevanb\DoctrineStats\Doctrine\DBAL\Logging\SqlLogger
+    doctrine_stats.logger.sql:
+        class: steevanb\DoctrineStats\Doctrine\DBAL\Logger\SqlLogger
         public: false

@@ -16,19 +16,14 @@ class PostLazyLoadEventArgs extends EventArgs
     /** @var object */
     protected $entity;
 
-    /** @var string */
-    protected $preLazyLoadEventId;
-
     /**
      * @param EntityManagerInterface $entityManager
      * @param object $entity
-     * @param string $preLazyLoadEventId
      */
-    public function __construct(EntityManagerInterface $entityManager, $entity, $preLazyLoadEventId)
+    public function __construct(EntityManagerInterface $entityManager, $entity)
     {
         $this->entityManager = $entityManager;
         $this->entity = $entity;
-        $this->preLazyLoadEventId = $preLazyLoadEventId;
     }
 
     /**
@@ -45,13 +40,5 @@ class PostLazyLoadEventArgs extends EventArgs
     public function getEntity()
     {
         return $this->entity;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPreLazyLoadEventId()
-    {
-        return $this->preLazyLoadEventId;
     }
 }

@@ -6,7 +6,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\PersistentCollection;
 use Doctrine\ORM\UnitOfWork as DoctrineUnitOfWork;
 use steevanb\DoctrineStats\Doctrine\ORM\Event\PostLazyLoadEventArgs;
-use steevanb\DoctrineStats\Doctrine\ORM\Event\PreLazyLoadEventArgs;
 
 class UnitOfWork extends DoctrineUnitOfWork
 {
@@ -21,15 +20,11 @@ class UnitOfWork extends DoctrineUnitOfWork
      */
     public function loadCollection(PersistentCollection $collection)
     {
-        $em = $this->getParentEntityManager();
-
-        $preLazyloadEventArgs = new PreLazyLoadEventArgs();
-        $em->getEventManager()->dispatchEvent(PreLazyLoadEventArgs::EVENT_NAME, $preLazyloadEventArgs);
-
         parent::loadCollection($collection);
 
+        $em = $this->getParentEntityManager();
         foreach ($collection->toArray() as $element) {
-            $postLazyloadEventArgs = new PostLazyLoadEventArgs($em, $element, $preLazyloadEventArgs->getEventId());
+            $postLazyloadEventArgs = new PostLazyLoadEventArgs($em, $element);
             $em->getEventManager()->dispatchEvent(PostLazyLoadEventArgs::EVENT_NAME, $postLazyloadEventArgs);
         }
     }

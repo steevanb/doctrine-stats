@@ -2,11 +2,10 @@
 
 namespace steevanb\DoctrineStats\Bridge\DoctrineStatsBundle\DataCollector;
 
-use Doctrine\DBAL\Logging\DebugStack;
-use Doctrine\DBAL\Logging\SQLLogger;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Internal\Hydration\ObjectHydrator;
 use steevanb\DoctrineStats\Bridge\DoctrineCollectorInterface;
+use steevanb\DoctrineStats\Doctrine\DBAL\Logger\SqlLogger;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
@@ -16,7 +15,7 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
     /** @var array */
     protected $lazyLoadedEntities = [];
 
-    /** @var SQLLogger */
+    /** @var SqlLogger */
     protected $sqlLogger;
 
     /** @var array */
@@ -41,9 +40,9 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
     protected $hydratedEntities = [];
 
     /**
-     * @param DebugStack $sqlLogger
+     * @param SqlLogger $sqlLogger
      */
-    public function __construct(DebugStack $sqlLogger)
+    public function __construct(SqlLogger $sqlLogger)
     {
         $this->sqlLogger = $sqlLogger;
     }
@@ -115,7 +114,7 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
                 if ($mapping['targetEntity'] === $classMetaData->name) {
                     $associations[] = array_merge(
                         $this->explodeClassParts($metaData->name),
-                        array('field' => $field)
+                        ['field' => $field]
                     );
                 }
             }
@@ -123,10 +122,11 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
 
         $this->lazyLoadedEntities[] = array_merge(
             $this->explodeClassParts($classMetaData->name),
-            array(
+            [
                 'identifiers' => $classMetaData->getIdentifierValues($entity),
-                'associations' => $associations
-            )
+                'associations' => $associations,
+                'queryIndex' => $this->sqlLogger->getCurrentQueryIndex()
+            ]
         );
 
         return $this;
@@ -140,7 +140,7 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
     public function addManagedEntity($className, array $identifiers)
     {
         if (array_key_exists($className, $this->managedEntities) === false) {
-            $this->managedEntities[$className] = array();
+            $this->managedEntities[$className] = [];
         }
         $this->managedEntities[$className][] = $this->identifiersAsString($identifiers);
 
@@ -155,9 +155,12 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
     public function addHydrationTime($hydratorClassName, $time)
     {
         if (isset($this->hydrationTimes[$hydratorClassName]) === false) {
-            $this->hydrationTimes[$hydratorClassName] = 0;
+            $this->hydrationTimes[$hydratorClassName] = [];
         }
-        $this->hydrationTimes[$hydratorClassName] += $time;
+        $this->hydrationTimes[$hydratorClassName][] = [
+            'queryIndex' => $this->sqlLogger->getCurrentQueryIndex(),
+            'time' => $time
+        ];
 
         return $this;
     }
@@ -189,9 +192,9 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
      */
     public function collect(Request $request, Response $response, \Exception $exception = null)
     {
-        $this->data = array(
+        $this->data = [
             'lazyLoadedEntities' => $this->lazyLoadedEntities,
-            'queries' => $this->sqlLogger->queries,
+            'queries' => $this->sqlLogger->getQueries(),
             'managedEntities' => $this->managedEntities,
             'hydrationTimes' => $this->hydrationTimes,
             'queriesAlert' => $this->queriesAlert,
@@ -199,7 +202,7 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
             'lazyLoadedEntitiesAlert' => $this->lazyLoadedEntitiesAlert,
             'hydrationTimeAlert' => $this->hydrationTimeAlert,
             'hydratedEntities' => $this->hydratedEntities
-        );
+        ];
     }
 
     /**
@@ -210,15 +213,45 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
         static $return = false;
 
         if ($return === false) {
-            $return = array();
-            foreach ($this->data['queries'] as $query) {
+            $return = [];
+            foreach ($this->data['queries'] as $index => $query) {
                 if (array_key_exists($query['sql'], $return) === false) {
-                    $return[$query['sql']] = array('executionMS' => 0, 'data' => array());
+                    $return[$query['sql']] = [
+                        'queryTime' => 0,
+                        'queryTimePercent' => 0,
+                        'data' => [],
+                        'lazyLoadedEntities' => [],
+                        'hydrationTime' => 0,
+                        'hydrationTimePercent' => 0
+                    ];
                 }
-                $return[$query['sql']]['executionMS'] += $query['executionMS'] * 1000;
-                $return[$query['sql']]['data'][] = array(
-                    'params' => $query['params']
+                $return[$query['sql']]['queryTime'] += $query['time'] * 1000;
+                $return[$query['sql']]['data'][] = ['params' => $query['params']];
+
+                foreach ($this->data['lazyLoadedEntities'] as $lazyLoadedEntity) {
+                    if ($lazyLoadedEntity['queryIndex'] === $index) {
+                        if (array_key_exists($index, $return[$query['sql']]['lazyLoadedEntities']) === false) {
+                            $return[$query['sql']]['lazyLoadedEntities'][$index] = [];
+                        }
+                        $return[$query['sql']]['lazyLoadedEntities'][$index][] = $lazyLoadedEntity;
+                    }
+                }
+
+                foreach ($this->data['hydrationTimes'] as $hydrationTimes) {
+                    foreach ($hydrationTimes as $hydrationTime) {
+                        if ($hydrationTime['queryIndex'] === $index) {
+                            $return[$query['sql']]['hydrationTime'] += $hydrationTime['time'];
+                        }
+                    }
+                }
+            }
+
+            foreach ($return as &$queryData) {
+                $queryData['queryTimePercent'] = round(
+                    ($queryData['queryTime'] * 100)
+                    / ($queryData['hydrationTime'] + $queryData['queryTime'])
                 );
+                $queryData['hydrationTimePercent'] = 100 - $queryData['queryTimePercent'];
             }
 
             uasort($return, function ($queryA, $queryB) {
@@ -244,7 +277,7 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
     {
         $return = 0;
         foreach ($this->getQueries() as $query) {
-            $return += $query['executionMS'];
+            $return += $query['queryTime'];
         }
 
         return round($return, 2);
@@ -341,8 +374,10 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
     public function getHydrationTotalTime()
     {
         $return = 0;
-        foreach ($this->getHydrationTimes() as $time) {
-            $return += $time;
+        foreach ($this->data['hydrationTimes'] as $times) {
+            foreach ($times as $time) {
+                $return += $time['time'];
+            }
         }
 
         return round($return, 2);
@@ -351,9 +386,17 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
     /**
      * @return array
      */
-    public function getHydrationTimes()
+    public function getHydrationTimesByHydrator()
     {
-        return $this->data['hydrationTimes'];
+        $return = [];
+        foreach ($this->data['hydrationTimes'] as $hydratorClassName => $times) {
+            $return[$hydratorClassName] = 0;
+            foreach ($times as $time) {
+                $return[$hydratorClassName] += $time['time'];
+            }
+        }
+
+        return $return;
     }
 
     /**
@@ -434,7 +477,7 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
     public function showDoctrineHydrationHelp()
     {
         $return = true;
-        if (in_array(ObjectHydrator::class, $this->getHydrationTimes())) {
+        if (array_key_exists(ObjectHydrator::class, $this->data['hydrationTimes'])) {
             foreach ($this->getQueries() as $sql => $data) {
                 $sub7 = substr($sql, 0, 7);
                 $sub8 = substr($sql, 0, 8);
@@ -483,10 +526,10 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
     {
         $posBackSlash = strrpos($fullyClassifiedClassName, '\\');
 
-        return array(
+        return [
             'namespace' => substr($fullyClassifiedClassName, 0, $posBackSlash),
             'className' => substr($fullyClassifiedClassName, $posBackSlash + 1)
-        );
+        ];
     }
 
     /**
@@ -510,7 +553,7 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
      * @param array $identifiers
      * @return string
      */
-    protected function identifiersAsString(array $identifiers)
+    public function identifiersAsString(array $identifiers)
     {
         $return = [];
         foreach ($identifiers as $name => $value) {

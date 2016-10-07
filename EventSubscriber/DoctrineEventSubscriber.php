@@ -36,23 +36,13 @@ class DoctrineEventSubscriber implements EventSubscriber
      */
     public function getSubscribedEvents()
     {
-        return array(
+        return [
             PostLazyLoadEventArgs::EVENT_NAME,
             PreHydrationEventArgs::EVENT_NAME,
             PostHydrationEventArgs::EVENT_NAME,
             PostCreateEntityEventArgs::EVENT_NAME,
             Events::postLoad
-        );
-    }
-
-    /**
-     * @param PreLazyLoadEventArgs $eventArgs
-     */
-    public function preLazyLoad(PreLazyLoadEventArgs $eventArgs)
-    {
-        $this
-            ->collector
-            ->addLazyLoadedEntity($eventArgs->getEntityManager(), $eventArgs->getEntity());
+        ];
     }
 
     /**

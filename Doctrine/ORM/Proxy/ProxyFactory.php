@@ -7,7 +7,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Proxy\Proxy;
 use Doctrine\ORM\Proxy\ProxyFactory as DoctrineProxyFactory;
 use steevanb\DoctrineStats\Doctrine\ORM\Event\PostLazyLoadEventArgs;
-use steevanb\DoctrineStats\Doctrine\ORM\Event\PreLazyLoadEventArgs;
 
 class ProxyFactory extends DoctrineProxyFactory
 {
@@ -34,16 +33,9 @@ class ProxyFactory extends DoctrineProxyFactory
             $entityManager = $property->getValue($entityPersister);
             $property->setAccessible(false);
 
-            $preLazyLoadEventArgs = new PreLazyLoadEventArgs();
-            $entityManager->getEventManager()->dispatchEvent(PreLazyLoadEventArgs::EVENT_NAME, $preLazyLoadEventArgs);
-
             call_user_func($doctrineInitializer, $proxy);
 
-            $postLazyLoadEventArgs = new PostLazyLoadEventArgs(
-                $entityManager,
-                $proxy,
-                $preLazyLoadEventArgs->getEventId()
-            );
+            $postLazyLoadEventArgs = new PostLazyLoadEventArgs($entityManager, $proxy);
             $entityManager->getEventManager()->dispatchEvent(PostLazyLoadEventArgs::EVENT_NAME, $postLazyLoadEventArgs);
         };
 

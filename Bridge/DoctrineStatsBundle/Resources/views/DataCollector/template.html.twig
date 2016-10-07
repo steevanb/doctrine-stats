@@ -140,6 +140,10 @@
         tr.hydrated-entities td {
             background-color: #ededed;
         }
+
+        div.indented {
+            margin-left: 20px;
+        }
     </style>
 {% endblock %}
 
@@ -165,20 +169,20 @@
             <span class="label">Lazy loaded entities</span>
         </div>
         <div class="metric">
-            <span class="value">{{ collector.getQueriesTime() }}</span>
-            <span class="label">Queries time ({{ collector.getQueriesTimePercent() }}%)</span>
+            <span class="value">{{ collector.getQueriesTime() }} <span class="text-small">ms</span></span>
+            <span class="label">Queries ({{ collector.getQueriesTimePercent() }}%)</span>
         </div>
         {% if collector.isHydratorsOverloaded() %}
             <div class="metric{% if collector.getHydrationTotalTime() >= collector.getHydrationTimeAlert() %} metric-red{% endif %}">
-                <span class="value">{{ collector.getHydrationTotalTime() }}</span>
+                <span class="value">{{ collector.getHydrationTotalTime() }} <span class="text-small">ms</span></span>
                 <span class="label">
-                    Hydration time ({{ collector.getHydrationTimePercent() }}%)
+                    Hydration ({{ collector.getHydrationTimePercent() }}%)
                 </span>
             </div>
 
             <div class="metric">
-                <span class="value">{{ collector.getDoctrineTime() }}</span>
-                <span class="label">Doctrine time (ms)</span>
+                <span class="value">{{ collector.getDoctrineTime() }} <span class="text-small">ms</span></span>
+                <span class="label">Doctrine</span>
             </div>
         {% endif %}
     </div>
@@ -210,6 +214,7 @@
         <thead>
             <tr>
                 <th>Count</th>
+                <th>Type</th>
                 <th>Time</th>
                 <th>Info</th>
             </tr>
@@ -222,7 +227,18 @@
                             {{ queries.data|length }}
                         </span>
                     </td>
-                    <td class="nowrap">{{ '%0.2f'|format(queries.executionMS) }}&nbsp;ms</td>
+                    <td class="nowrap">{% spaceless %}
+                        {% if queries.lazyLoadedEntities|length > 0 %}
+                            <span class="badge metric-red">Lazy loading</span>
+                        {% else %}
+                            Manual
+                        {% endif %}
+                    {% endspaceless %}</td>
+                    <td class="nowrap">{% spaceless %}
+                        <img src="http://www.dustball.com/icons/icons/database.png" title="SQL time" /> {{ '%0.2f'|format(queries.queryTime) }}&nbsp;ms ({{ queries.queryTimePercent }}%)<br />
+                        <img src="http://www.dustball.com/icons/icons/page_white_php.png" title="Hydration time" /> {{ '%0.2f'|format(queries.hydrationTime) }}&nbsp;ms ({{ queries.hydrationTimePercent }}%)<br />
+                        <img src="http://www.dustball.com/icons/icons/time.png" title="Total time" /> {{ '%0.2f'|format(queries.queryTime + queries.hydrationTime) }}&nbsp;ms
+                    {% endspaceless %}</td>
                     <td>
                         <div>{{ sql|doctrine_pretty_query(highlight_only = true) }}</div>
 
@@ -231,9 +247,23 @@
                                 class="link-inverse sf-toggle"
                                 data-toggle-selector="#query-parameters-{{ loop.index }}"
                                 data-toggle-alt-content="Hide parameters"
-                            >
-                                Show parameters
-                            </a>
+                            >Show parameters</a>
+
+                            {% set countLazyLoadedEntities = 0 %}
+                            {% for lazyLoadedEntities in queries.lazyLoadedEntities %}
+                                {% set countLazyLoadedEntities = countLazyLoadedEntities + lazyLoadedEntities|length %}
+                            {% endfor %}
+
+                            {% if countLazyLoadedEntities > 0 %}
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <a
+                                    class="link-inverse sf-toggle"
+                                    data-toggle-selector="#query-lazy-loaded-entities-{{ loop.index }}"
+                                    data-toggle-alt-content="Hide entiti{% if countLazyLoadedEntities == 1 %}y{% else %}es{% endif %}"
+                                >
+                                    Show {{ countLazyLoadedEntities }} entiti{% if countLazyLoadedEntities == 1 %}y{% else %}es{% endif %}
+                                </a>
+                            {% endif %}
 
                             <div id="query-parameters-{{ loop.index }}">
                                 {% for query in queries.data %}
@@ -242,6 +272,21 @@
                                     <br />
                                 {% endfor %}
                             </div>
+
+                            {% if queries.lazyLoadedEntities|length > 0 %}
+                                <div id="query-lazy-loaded-entities-{{ loop.index }}">
+                                    {% for lazyLoadedeEntities in queries.lazyLoadedEntities %}
+                                        <strong>#{{ loop.index }}</strong>
+                                        <div class="indented">
+                                            {% for lazyLoadedeEntity in lazyLoadedeEntities %}
+                                                {{ self.className(lazyLoadedeEntity) }},
+                                                {{ collector.identifiersAsString(lazyLoadedeEntity.identifiers) }}
+                                                <br />
+                                            {% endfor %}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
                         </div>
                     </td>
                 </tr>
@@ -348,7 +393,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for hydrator,time in collector.getHydrationTimes() %}
+                {% for hydrator,time in collector.getHydrationTimesByHydrator() %}
                     {% set countHydratedEntities = collector.countHydratedEntities(hydrator) %}
                     <tr>
                         <td>{{ '%0.2f'|format(time) }} ms</td>
@@ -375,6 +420,8 @@
                                     Show {{ countHydratedEntities }}
                                     entit{% if countHydratedEntities > 1 %}ies{% else %}y{% endif %}
                                 </a>
+                            {% else %}
+                                Unavailable
                             {% endif %}
                         </td>
                     </tr>

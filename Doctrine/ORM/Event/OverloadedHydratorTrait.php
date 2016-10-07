@@ -22,7 +22,7 @@ trait OverloadedHydratorTrait
      * @param array $hints
      * @return array
      */
-    public function hydrateAll($stmt, $resultSetMapping, array $hints = array())
+    public function hydrateAll($stmt, $resultSetMapping, array $hints = [])
     {
         $eventId = $this->dispatchPreHydrationEvent();
         $return = parent::hydrateAll($stmt, $resultSetMapping, $hints);
