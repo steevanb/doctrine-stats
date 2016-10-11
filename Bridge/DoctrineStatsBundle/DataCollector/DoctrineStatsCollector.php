@@ -474,26 +474,6 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
     }
 
     /**
-     * @return bool
-     */
-    public function showDoctrineHydrationHelp()
-    {
-        $return = true;
-        if (array_key_exists(ObjectHydrator::class, $this->data['hydrationTimes'])) {
-            foreach ($this->getQueries() as $sql => $data) {
-                $sub7 = substr($sql, 0, 7);
-                $sub8 = substr($sql, 0, 8);
-                if ($sub7 === 'INSERT ' || $sub7 === 'UPDATE ' || $sub8 === 'REPLACE ') {
-                    $return = false;
-                    break;
-                }
-            }
-        }
-
-        return $return;
-    }
-
-    /**
      * @param string $hydrator
      * @return array
      */

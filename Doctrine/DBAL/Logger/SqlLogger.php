@@ -40,7 +40,8 @@ class SqlLogger implements SQLLoggerInterface
         if ($this->backtraceEnabled) {
             if (class_exists('\DumpBacktrace') === false) {
                 throw new \Exception(
-                    'You need to add steevanb/php-backtrace in your dependencies to activate query backtrace.'
+                    'You need to add steevanb/php-backtrace ^1.1 in your dependencies to activate query backtrace. '
+                    . 'Example with composer : composer require steevanb/php-backtrace ^1.1'
                 );
             }
             $backtrace = \DumpBacktrace::getBacktraces();

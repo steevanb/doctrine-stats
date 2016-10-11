@@ -21,13 +21,8 @@ Add important Doctrine statistics :
 Installation
 ------------
 
-```json
-# composer.json
-{
-    "require-dev": {
-        "steevanb/doctrine-stats": "^1.1"
-    }
-}
+```bash
+composer require "steevanb/doctrine-stats": "^1.1"
 ```
 
 If you want to add hydration time to your statistics :
@@ -36,7 +31,7 @@ If you want to add hydration time to your statistics :
 # composer.json
 {
     "require-dev": {
-        "steevanb/composer-overlad-class": "^2.0"
+        "steevanb/composer-overlad-class": "^1.1"
     },
     "autoload": {
         "psr-4": {
@@ -72,6 +67,9 @@ If you want to add hydration time to your statistics :
         }
     }
 }
+```
+```bash
+composer update steevanb/composer-overlad-class
 ```
 
 Symfony 2.x and 3.x integration
