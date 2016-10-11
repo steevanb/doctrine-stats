@@ -1,9 +1,9 @@
-[![version](https://img.shields.io/badge/version-1.1.0-green.svg)](https://github.com/steevanb/doctrine-stats/tree/1.1.0)
+[![version](https://img.shields.io/badge/version-1.2.0-green.svg)](https://github.com/steevanb/doctrine-stats/tree/1.2.0)
 [![doctrine](https://img.shields.io/badge/doctrine/orm-^2.4.8-blue.svg)](http://www.doctrine-project.org)
 [![php](https://img.shields.io/badge/php-^5.4.6 || ^7.0-blue.svg)](http://www.php.net)
-![Lines](https://img.shields.io/badge/code lines-1728-green.svg)
+![Lines](https://img.shields.io/badge/code lines-2331-green.svg)
 ![Total Downloads](https://poser.pugx.org/steevanb/doctrine-stats/downloads)
-[![SensionLabsInsight](https://img.shields.io/badge/SensionLabsInsight-platinum-brightgreen.svg)](https://insight.sensiolabs.com/projects/884a7b62-bb7a-41dc-8198-6d2bb0694795/analyses/7)
+[![SensionLabsInsight](https://img.shields.io/badge/SensionLabsInsight-platinum-brightgreen.svg)](https://insight.sensiolabs.com/projects/884a7b62-bb7a-41dc-8198-6d2bb0694795/analyses/9)
 [![Scrutinizer](https://scrutinizer-ci.com/g/steevanb/doctrine-stats/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/steevanb/doctrine-stats/)
 
 doctrine-stats
@@ -12,7 +12,7 @@ doctrine-stats
 Add important Doctrine statistics :
 * count managed entities
 * count lazy loaded entities
-* hydration time by hydrator
+* hydration time by hydrator and query
 * group queries by query string, show differents parameters used by same query string
 * count different query string used
 
@@ -22,7 +22,7 @@ Installation
 ------------
 
 ```bash
-composer require "steevanb/doctrine-stats": "^1.1"
+composer require "steevanb/doctrine-stats": "^1.2"
 ```
 
 If you want to add hydration time to your statistics :
@@ -31,7 +31,7 @@ If you want to add hydration time to your statistics :
 # composer.json
 {
     "require-dev": {
-        "steevanb/composer-overlad-class": "^1.1"
+        "steevanb/composer-overload-class": "^1.1"
     },
     "autoload": {
         "psr-4": {
@@ -69,7 +69,7 @@ If you want to add hydration time to your statistics :
 }
 ```
 ```bash
-composer update steevanb/composer-overlad-class
+composer update steevanb/composer-overload-class
 ```
 
 Symfony 2.x and 3.x integration

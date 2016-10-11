@@ -1,3 +1,12 @@
+1.2.0 (2016-11-10)
+------------------
+
+- Disable panels when hydrators are not overloaded
+- Add nice debug_backtrace() for each query
+- Add SQL time, hydration time and Doctrine time for each query
+- Add type (Manual / Lazy loading) for each query
+- Add Show entity for each query
+
 1.1.0 (2016-08-17)
 ------------------
 
