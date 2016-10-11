@@ -10,13 +10,7 @@ use steevanb\DoctrineStats\Doctrine\ORM\Event\PostLazyLoadEventArgs;
 class UnitOfWork extends DoctrineUnitOfWork
 {
     /**
-     * Initializes (loads) an uninitialized persistent collection of an entity.
-     *
-     * @param \Doctrine\ORM\PersistentCollection $collection The collection to initialize.
-     *
-     * @return void
-     *
-     * @todo Maybe later move to EntityManager#initialize($proxyOrCollection). See DDC-733.
+     * @param PersistentCollection $collection
      */
     public function loadCollection(PersistentCollection $collection)
     {

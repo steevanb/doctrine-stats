@@ -3,7 +3,6 @@
 namespace steevanb\DoctrineStats\Bridge\DoctrineStatsBundle\DataCollector;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Internal\Hydration\ObjectHydrator;
 use steevanb\DoctrineStats\Bridge\DoctrineCollectorInterface;
 use steevanb\DoctrineStats\Doctrine\DBAL\Logger\SqlLogger;
 use Symfony\Component\HttpFoundation\Request;
