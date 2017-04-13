@@ -248,10 +248,14 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
             }
 
             foreach ($return as &$queryData) {
-                $queryData['queryTimePercent'] = round(
-                    ($queryData['queryTime'] * 100)
-                    / ($queryData['hydrationTime'] + $queryData['queryTime'])
-                );
+                if ($queryData['hydrationTime'] === 0 && $queryData['queryTime'] === 0) {
+                    $queryData['queryTimePercent'] = 100;
+                } else {
+                    $queryData['queryTimePercent'] = round(
+                        ($queryData['queryTime'] * 100)
+                        / ($queryData['hydrationTime'] + $queryData['queryTime'])
+                    );
+                }
                 $queryData['hydrationTimePercent'] = 100 - $queryData['queryTimePercent'];
             }
 
