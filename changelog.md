@@ -1,3 +1,8 @@
+1.2.1 (2017-04-13)
+------------------
+
+- #4 Fix division by zero if query and hydration time equal 0
+
 1.2.0 (2016-11-10)
 ------------------
 
