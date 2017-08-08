@@ -1,10 +1,15 @@
-1.2.1 (2017-04-13)
-------------------
+### [1.3.0](../../compare/1.2.1...1.3.0) - 2017-08-09
+
+- [BC] Remove _DoctrineCollectorInterface::addManagedEntity()_ : Doctrine do not always trigger _postLoad_ event, so we can't use it to retrieve informations
+- [BC] Remove _DoctrineStatsCollector::addManagedEntity()_
+- _steevanb/php-backtrace_ dependency could be _^1.1_ or _^2.0_ now (_^1.1_ before)
+- Group backtraces in _Show backtraces_, instead of one _Show backtrace #X_ per query
+
+### [1.2.1](../../compare/1.2.0...1.2.1) - 2017-04-13
 
 - #4 Fix division by zero if query and hydration time equal 0
 
-1.2.0 (2016-11-10)
-------------------
+### [1.2.0](../../compare/1.1.0...1.2.0) - 2016-11-10
 
 - Disable panels when hydrators are not overloaded
 - Add nice debug_backtrace() for each query
@@ -12,8 +17,7 @@
 - Add type (Manual / Lazy loading) for each query
 - Add Show entity for each query
 
-1.1.0 (2016-08-17)
-------------------
+### [1.1.0](../../compare/1.0.3...1.1.0) - 2016-08-17
 
 - Add $identifiers type in DoctrineCollectorInterface::addManagedentity($className, array $identifiers)
 - Add DoctrineCollectorInterface::addHydratedEntity($hydratorClassName, $className, $classIdentifiers)
@@ -27,24 +31,20 @@
 - Add HydrationEventsTrait::dispatchPostCreateEntityEvent(ClassMetadata $classMetaData, array $data)
 - Add DoctrineEventSubscriber::postCreateEntity(PostCreateEntityEventArgs $eventArgs)
 
-1.0.3 (2016-08-10)
-------------------
+### [1.0.3](../../compare/1.0.2...1.0.3) - 2016-08-10
 
 - Fix division by zero in DoctrineStatsCollector::getHydrationTimePercent() and getQueriesTimePercent()
 
-1.0.2 (2016-08-08)
-------------------
+### [1.0.2](../../compare/1.0.1...1.0.2) - 2016-08-08
 
 - Add queries time in Symfony WebProfiler
 - Add queries time percent and hydration time percent in Symfony WebProfiler
 
-1.0.1 (2016-08-05)
-------------------
+### [1.0.1](../../compare/1.0.0...1.0.1) - 2016-08-05
 
 - Fix DoctrineEventSubscriber::postLoad() call to addManagedEntity(), only managed entities will trigger this call
 
-1.0.0 (2016-07-21)
-------------------
+### 1.0.0 - 2016-07-21
 
 - Add steevanb\DoctrineStats\Doctrine\ORM\EntityManager to overload Doctrine\ORM\Proxy\ProxyFactory
 - Add steevanb\DoctrineStats\Doctrine\ORM\Proxy\ProxyFactory to add postLazyLoad event

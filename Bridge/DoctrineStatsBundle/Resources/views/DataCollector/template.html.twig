@@ -76,7 +76,6 @@
 
 
 {% block menu %}
-    {# This left-hand menu appears when using the full-screen profiler. #}
     <span class="label{% if collector.countWarnings() > 0 %} label-status-error{% endif %}">
         <span class="icon">{{ include('@Doctrine/Collector/icon.svg') }}</span>
         <strong>Statistics</strong>
@@ -299,22 +298,31 @@
                                     class="link-inverse sf-toggle"
                                     data-toggle-selector="#query-lazy-loaded-entities-{{ loop.index }}"
                                     data-toggle-alt-content="Hide entiti{% if countLazyLoadedEntities == 1 %}y{% else %}es{% endif %}"
-                                >
-                                    Show {{ countLazyLoadedEntities }} entit{% if countLazyLoadedEntities == 1 %}y{% else %}ies{% endif %}
-                                </a>
+                                >Show {{ countLazyLoadedEntities }} entit{% if countLazyLoadedEntities == 1 %}y{% else %}ies{% endif %}</a>
                             {% endif %}
 
                             {% set queryIndex = loop.index %}
-                            {% for backtrace in queries.backtraces %}
-                                &nbsp;&nbsp;&nbsp;&nbsp;
-                                <a
-                                    class="link-inverse sf-toggle"
-                                    data-toggle-selector="#query-backtraces-{{ queryIndex }}-{{ loop.index }}"
-                                    data-toggle-alt-content="Hide backtrace #{{ loop.index }}"
-                                >Show backtrace #{{ loop.index }}</a>
-                            {% endfor %}
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            <a
+                                class="link-inverse sf-toggle"
+                                data-toggle-selector="#query-backtraces-{{ queryIndex }}"
+                                data-toggle-alt-content="Hide backtraces"
+                            >Show backtraces</a>
+                            <div id="query-backtraces-{{ queryIndex }}" class="sf-toggle-content sf-toggle-hidden">
+                                {% for backtrace in queries.backtraces %}
+                                    <a
+                                        id="show-backtrace-{{ queryIndex }}-{{ loop.index }}"
+                                        class="link-inverse sf-toggle"
+                                        data-toggle-selector="#query-backtraces-{{ queryIndex }}-{{ loop.index }}"
+                                        data-toggle-alt-content="Hide backtrace #{{ loop.index }}"
+                                    >Show backtrace #{{ loop.index }}</a>
+                                    {% if not loop.last %}
+                                        &nbsp;&nbsp;&nbsp;&nbsp;
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
 
-                            <div id="query-parameters-{{ loop.index }}">
+                            <div id="query-parameters-{{ loop.index }}" class="sf-toggle-content sf-toggle-hidden">
                                 {% for query in queries.data %}
                                     <span class="text-bold">#{{ loop.index }}</span>
                                     {{ query.params|yaml_encode }}
@@ -323,7 +331,7 @@
                             </div>
 
                             {% if queries.lazyLoadedEntities|length > 0 %}
-                                <div id="query-lazy-loaded-entities-{{ loop.index }}">
+                                <div id="query-lazy-loaded-entities-{{ loop.index }}" class="sf-toggle-content sf-toggle-hidden">
                                     {% for lazyLoadedeEntities in queries.lazyLoadedEntities %}
                                         <strong>#{{ loop.index }}</strong>
                                         <div class="indented">
@@ -338,7 +346,7 @@
                             {% endif %}
 
                             {% for backtrace in queries.backtraces %}
-                                <div id="query-backtraces-{{ queryIndex }}-{{ loop.index }}">
+                                <div id="query-backtraces-{{ queryIndex }}-{{ loop.index }}" class="sf-toggle-content sf-toggle-hidden">
                                     {% if backtrace is null %}
                                         <span class="alert-help">
                                             No backtrace informations available. Set doctrine_stats.query_backtrace to true to enable it.
@@ -376,7 +384,7 @@
                     <td>
                         {{ self.className(collector.explodeClassParts(hydrator)) }}
                         {% if countHydratedEntities > 0 %}
-                            <div id="hydrated-entities-{{ loop.index }}">
+                            <div id="hydrated-entities-{{ loop.index }}" class="sf-toggle-content sf-toggle-hidden">
                                 {% for className,identifiers in collector.getHydratedEntities(hydrator) %}
                                     {{ self.className(collector.explodeClassParts(className)) }}[{{ identifiers|length }}]
                                     <br />
@@ -389,10 +397,10 @@
                     <td>
                         {% if countHydratedEntities > 0 %}
                             <a
-                                    class="link-inverse sf-toggle"
-                                    data-toggle-selector="#hydrated-entities-{{ loop.index }}"
-                                    data-toggle-alt-content="Hide hydrated entit{% if countHydratedEntities > 1 %}ies{% else %}y{% endif %}"
-                                    >
+                                class="link-inverse sf-toggle"
+                                data-toggle-selector="#hydrated-entities-{{ loop.index }}"
+                                data-toggle-alt-content="Hide hydrated entit{% if countHydratedEntities > 1 %}ies{% else %}y{% endif %}"
+                            >
                                 Show {{ countHydratedEntities }}
                                 entit{% if countHydratedEntities > 1 %}ies{% else %}y{% endif %}
                             </a>
@@ -419,14 +427,23 @@
             </tr>
         </thead>
         <tbody>
-            {% for className, identifiers in collector.getManagedEntities() %}
+            {% for className, stats in collector.getManagedEntities() %}
                 <tr>
-                    <td>{{ identifiers|length }}</td>
+                    <td>
+                        <span class="badge{% if stats.count >= 10 %} metric-yellow{% endif %}">
+                            {{ stats.count }}
+                        </span>
+                    </td>
                     <td>
                         {{ self.className(collector.explodeClassParts(className)) }}
 
-                        <div id="managed-entities-{{ loop.index }}">
-                            {{ self.identifiers(collector, identifiers) }}
+                        <div id="managed-entities-{{ loop.index }}" class="sf-toggle-content sf-toggle-hidden">
+                            {% for id in stats.ids %}
+                                {{ id }}
+                                {% if not loop.last %}
+                                    <br />
+                                {% endif %}
+                            {% endfor %}
                         </div>
                     </td>
                     <td>
@@ -499,11 +516,14 @@
     {% endspaceless %}
 {% endmacro %}
 
-{% macro identifiers(collector, identifiers) %}
-    {% for identifier,count in collector.mergeIdentifiers(identifiers) %}
+{% macro identifiers(collector, identifiers, merged = false) %}
+    {% if not merged %}
+        {% set identifiers = collector.mergeIdentifiers(identifiers) %}
+    {% endif %}
+    {% for identifier,count in identifiers %}
         {{ identifier }}
         {% if count > 1 %}
-            ({{ count }}x)
+            (Loaded {{ count }} times)
         {% endif %}
         {% if loop.last == false %}
             <br />

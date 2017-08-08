@@ -3,9 +3,6 @@
 namespace steevanb\DoctrineStats\EventSubscriber;
 
 use Doctrine\Common\EventSubscriber;
-use Doctrine\ORM\Event\LifecycleEventArgs;
-use Doctrine\ORM\Events;
-use Doctrine\ORM\Proxy\Proxy;
 use steevanb\DoctrineStats\Bridge\DoctrineCollectorInterface;
 use steevanb\DoctrineStats\Doctrine\ORM\Event\PostCreateEntityEventArgs;
 use steevanb\DoctrineStats\Doctrine\ORM\Event\PostHydrationEventArgs;
@@ -23,31 +20,24 @@ class DoctrineEventSubscriber implements EventSubscriber
     /** @var DoctrineCollectorInterface  */
     protected $collector;
 
-    /**
-     * @param DoctrineCollectorInterface $collector
-     */
+    /** @param DoctrineCollectorInterface $collector */
     public function __construct(DoctrineCollectorInterface $collector)
     {
         $this->collector = $collector;
     }
 
-    /**
-     * @return array
-     */
+    /** @return array */
     public function getSubscribedEvents()
     {
         return [
             PostLazyLoadEventArgs::EVENT_NAME,
             PreHydrationEventArgs::EVENT_NAME,
             PostHydrationEventArgs::EVENT_NAME,
-            PostCreateEntityEventArgs::EVENT_NAME,
-            Events::postLoad
+            PostCreateEntityEventArgs::EVENT_NAME
         ];
     }
 
-    /**
-     * @param PostLazyLoadEventArgs $eventArgs
-     */
+    /** @param PostLazyLoadEventArgs $eventArgs */
     public function postLazyLoad(PostLazyLoadEventArgs $eventArgs)
     {
         $this
@@ -55,9 +45,7 @@ class DoctrineEventSubscriber implements EventSubscriber
             ->addLazyLoadedEntity($eventArgs->getEntityManager(), $eventArgs->getEntity());
     }
 
-    /**
-     * @param PreHydrationEventArgs $eventArgs
-     */
+    /** @param PreHydrationEventArgs $eventArgs */
     public function preHydration(PreHydrationEventArgs $eventArgs)
     {
         if ($this->preHydrationEventId === null) {
@@ -66,9 +54,7 @@ class DoctrineEventSubscriber implements EventSubscriber
         }
     }
 
-    /**
-     * @param PostHydrationEventArgs $eventArgs
-     */
+    /** @param PostHydrationEventArgs $eventArgs */
     public function postHydration(PostHydrationEventArgs $eventArgs)
     {
         if ($this->preHydrationEventId === $eventArgs->getPreHydrationEventId()) {
@@ -82,26 +68,7 @@ class DoctrineEventSubscriber implements EventSubscriber
         }
     }
 
-    /**
-     * @param LifecycleEventArgs $eventArgs
-     */
-    public function postLoad(LifecycleEventArgs $eventArgs)
-    {
-        $metaData = $eventArgs->getEntityManager()->getClassMetadata(get_class($eventArgs->getEntity()));
-        if ($eventArgs->getEntity() instanceof Proxy) {
-            $className = $metaData->name;
-        } else {
-            $className = get_class($eventArgs->getEntity());
-        }
-
-        if ($eventArgs->getEntityManager()->getUnitOfWork()->isInIdentityMap($eventArgs->getEntity())) {
-            $this->collector->addManagedEntity($className, $metaData->getIdentifierValues($eventArgs->getEntity()));
-        }
-    }
-
-    /**
-     * @param PostCreateEntityEventArgs $eventArgs
-     */
+    /** @param PostCreateEntityEventArgs $eventArgs */
     public function postCreateEntity(PostCreateEntityEventArgs $eventArgs)
     {
         $this->collector->addHydratedEntity(

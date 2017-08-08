@@ -38,13 +38,15 @@ class SqlLogger implements SQLLoggerInterface
     public function startQuery($sql, array $params = null, array $types = null)
     {
         if ($this->backtraceEnabled) {
-            if (class_exists('\DumpBacktrace') === false) {
+            $isDumpBacktrace = class_exists('\DumpBacktrace');
+            $isDebugBacktrace = class_exists('\DebugBacktrace');
+            if ($isDumpBacktrace === false && $isDebugBacktrace === false) {
                 throw new \Exception(
-                    'You need to add steevanb/php-backtrace ^1.1 in your dependencies to activate query backtrace. '
-                    . 'Example with composer : composer require steevanb/php-backtrace ^1.1'
+                    'You need to add steevanb/php-backtrace ^1.1||^2.0 in your dependencies to activate query backtrace. '
+                    . 'Example with composer : composer require steevanb/php-backtrace ^1.1||^2.0'
                 );
             }
-            $backtrace = \DumpBacktrace::getBacktraces();
+            $backtrace = $isDumpBacktrace ? \DumpBacktrace::getBacktraces() : \DebugBacktrace::getBacktraces();
         } else {
             $backtrace = null;
         }

@@ -21,13 +21,6 @@ interface DoctrineCollectorInterface
     public function addHydrationTime($hydratorClassName, $time);
 
     /**
-     * @param string $className
-     * @param array $identifiers
-     * @return $this
-     */
-    public function addManagedEntity($className, array $identifiers);
-
-    /**
      * @param string $hydratorClassName
      * @param string $className
      * @param array $classIdentifiers

@@ -5,6 +5,7 @@ namespace steevanb\DoctrineStats\Bridge\DoctrineStatsBundle\DataCollector;
 use Doctrine\ORM\EntityManagerInterface;
 use steevanb\DoctrineStats\Bridge\DoctrineCollectorInterface;
 use steevanb\DoctrineStats\Doctrine\DBAL\Logger\SqlLogger;
+use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
@@ -38,12 +39,16 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
     /** @var array */
     protected $hydratedEntities = [];
 
+    /** @var RegistryInterface */
+    protected $doctrine;
+
     /**
      * @param SqlLogger $sqlLogger
      */
-    public function __construct(SqlLogger $sqlLogger)
+    public function __construct(SqlLogger $sqlLogger, RegistryInterface $doctrine)
     {
         $this->sqlLogger = $sqlLogger;
+        $this->doctrine = $doctrine;
     }
 
     /**
@@ -132,21 +137,6 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
     }
 
     /**
-     * @param string $className
-     * @param array $identifiers
-     * @return $this
-     */
-    public function addManagedEntity($className, array $identifiers)
-    {
-        if (array_key_exists($className, $this->managedEntities) === false) {
-            $this->managedEntities[$className] = [];
-        }
-        $this->managedEntities[$className][] = $this->identifiersAsString($identifiers);
-
-        return $this;
-    }
-
-    /**
      * @param string $hydratorClassName
      * @param float $time Time, in milliseconds
      * @return $this
@@ -194,7 +184,7 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
         $this->data = [
             'lazyLoadedEntities' => $this->lazyLoadedEntities,
             'queries' => $this->sqlLogger->getQueries(),
-            'managedEntities' => $this->managedEntities,
+            'managedEntities' => $this->parseManagedEntities(),
             'hydrationTimes' => $this->hydrationTimes,
             'queriesAlert' => $this->queriesAlert,
             'managedEntitiesAlert' => $this->managedEntitiesAlert,
@@ -227,7 +217,11 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
                 $return[$query['sql']]['queryTime'] += $query['time'] * 1000;
                 $return[$query['sql']]['data'][] = ['params' => $query['params']];
                 $return[$query['sql']]['backtraces'][$index] =
-                    $query['backtrace'] === null ? null : \DumpBacktrace::getDump($query['backtrace']);
+                    $query['backtrace'] === null
+                        ? null
+                        : class_exists('\DumpBacktrace')
+                            ? \DumpBacktrace::getDump($query['backtrace'])
+                            : \DebugBacktraceHtml::getDump($query['backtrace']);
 
                 foreach ($this->data['lazyLoadedEntities'] as $lazyLoadedEntity) {
                     if ($lazyLoadedEntity['queryIndex'] === $index) {
@@ -351,26 +345,22 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
     {
         static $ordered = false;
         if ($ordered === false) {
-            uasort($this->data['managedEntities'], function($managedA, $managedB) {
-                return $managedA > $managedB ? -1 : 1;
-            });
+            arsort($this->data['managedEntities']);
             $ordered = true;
         }
 
         return $this->data['managedEntities'];
     }
 
-    /**
-     * @return int
-     */
+    /** @return int */
     public function countManagedEntities()
     {
-        $count = 0;
-        foreach ($this->getManagedEntities() as $managedEntity) {
-            $count += count($managedEntity);
+        $return = 0;
+        foreach ($this->getManagedEntities() as $stats) {
+            $return += $stats['count'];
         }
 
-        return $count;
+        return $return;
     }
 
     /**
@@ -546,5 +536,23 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
         }
 
         return implode(', ', $return);
+    }
+
+    /** @return array */
+    protected function parseManagedEntities()
+    {
+        $return = [];
+        /** @var EntityManagerInterface $entityManager */
+        foreach ($this->doctrine->getEntityManagers() as $entityManager) {
+            foreach ($entityManager->getUnitOfWork()->getIdentityMap() as $class => $entities) {
+                $return[$class] = [
+                    'count' => count($entities),
+                    'ids' => array_keys($entities)
+                ];
+                sort($return[$class]['ids']);
+            }
+        }
+
+        return $return;
     }
 }

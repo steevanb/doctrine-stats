@@ -1,13 +1,12 @@
-[![version](https://img.shields.io/badge/version-1.2.1-green.svg)](https://github.com/steevanb/doctrine-stats/tree/1.2.1)
+[![version](https://img.shields.io/badge/version-1.3.0-green.svg)](https://github.com/steevanb/doctrine-stats/tree/1.3.0)
 [![doctrine](https://img.shields.io/badge/doctrine/orm-^2.4.8-blue.svg)](http://www.doctrine-project.org)
 [![php](https://img.shields.io/badge/php-^5.4.6%20||%20^7.0-blue.svg)](http://www.php.net)
-![Lines](https://img.shields.io/badge/code%20lines-2146-green.svg)
+![Lines](https://img.shields.io/badge/code%20lines-2135-green.svg)
 ![Total Downloads](https://poser.pugx.org/steevanb/doctrine-stats/downloads)
-[![SensionLabsInsight](https://img.shields.io/badge/SensionLabsInsight-platinum-brightgreen.svg)](https://insight.sensiolabs.com/projects/884a7b62-bb7a-41dc-8198-6d2bb0694795/analyses/18)
+[![SensionLabsInsight](https://img.shields.io/badge/SensionLabsInsight-platinum-brightgreen.svg)](https://insight.sensiolabs.com/projects/884a7b62-bb7a-41dc-8198-6d2bb0694795/analyses/24)
 [![Scrutinizer](https://scrutinizer-ci.com/g/steevanb/doctrine-stats/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/steevanb/doctrine-stats/)
 
-doctrine-stats
---------------
+### doctrine-stats
 
 Add important Doctrine statistics :
 * count managed entities
@@ -18,11 +17,10 @@ Add important Doctrine statistics :
 
 [Changelog](changelog.md)
 
-Installation
-------------
+### Installation
 
 ```bash
-composer require "steevanb/doctrine-stats": "^1.2"
+composer require "steevanb/doctrine-stats": "^1.3"
 ```
 
 If you want to add hydration time to your statistics :
@@ -72,13 +70,12 @@ If you want to add hydration time to your statistics :
 composer update steevanb/composer-overload-class
 ```
 
-Symfony 2.x and 3.x integration
--------------------------------
+### Symfony 2.x and 3.x integration
 
 Read Installation paragraph before.
 
 ```php
-# app/AppKernel.php
+### app/AppKernel.php
 class AppKernel
 {
     public function registerBundles()
@@ -93,18 +90,20 @@ class AppKernel
 If you want to add lazy loaded entities to your statistics :
 
 ```yml
-# app/config/config_dev.yml
+### app/config/config_dev.yml
 parameters:
     doctrine.orm.entity_manager.class: steevanb\DoctrineStats\Doctrine\ORM\EntityManager
 ```
 
-![Symfony profiler](symfony_profiler.jpg)
-
-![Symfony profiler panel](symfony_profiler_panel.jpg)
-
-Manual integration 
-------------------
+### Manual integration
 
 To retrieve statistics, you need to register steevanb\DoctrineStats\EventSubscriber\DoctrineEventSubscriber in your event manager.
 
 If you want to add lazy loaded entities to your statistics, you need to overload default EntityManager, with steevanb\DoctrineStats\Doctrine\ORM\EntityManager.
+
+
+### Screenshots
+
+![Symfony profiler](symfony_profiler.jpg)
+
+![Symfony profiler panel](symfony_profiler_panel.jpg)
