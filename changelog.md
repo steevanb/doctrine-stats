@@ -1,3 +1,8 @@
+### [1.3.1](../../compare/1.3.0...1.3.1) - 2017-08-09
+
+- Fix ternary operator syntax in _DoctrineStatsCollector_
+- Fix plural for _Show identifiers_ and _Hide identifiers_ in Symfony WebProfiler panel
+
 ### [1.3.0](../../compare/1.2.1...1.3.0) - 2017-08-09
 
 - [BC] Remove _DoctrineCollectorInterface::addManagedEntity()_ : Doctrine do not always trigger _postLoad_ event, so we can't use it to retrieve informations
