@@ -450,9 +450,9 @@
                         <a
                             class="link-inverse sf-toggle"
                             data-toggle-selector="#managed-entities-{{ loop.index }}"
-                            data-toggle-alt-content="Hide identifier{% if identifiers|length > 1 %}s{% endif %}"
+                            data-toggle-alt-content="Hide identifier{% if stats.ids|length > 1 %}s{% endif %}"
                         >
-                            Show identifier{% if identifiers|length > 1 %}s{% endif %}
+                            Show identifier{% if stats.ids|length > 1 %}s{% endif %}
                         </a>
                     </td>
                 </tr>
