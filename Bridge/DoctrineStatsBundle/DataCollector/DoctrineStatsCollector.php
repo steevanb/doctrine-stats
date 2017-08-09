@@ -219,9 +219,11 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
                 $return[$query['sql']]['backtraces'][$index] =
                     $query['backtrace'] === null
                         ? null
-                        : class_exists('\DumpBacktrace')
-                            ? \DumpBacktrace::getDump($query['backtrace'])
-                            : \DebugBacktraceHtml::getDump($query['backtrace']);
+                        : (
+                            class_exists('\DumpBacktrace')
+                                ? \DumpBacktrace::getDump($query['backtrace'])
+                                : \DebugBacktraceHtml::getDump($query['backtrace'])
+                        );
 
                 foreach ($this->data['lazyLoadedEntities'] as $lazyLoadedEntity) {
                     if ($lazyLoadedEntity['queryIndex'] === $index) {
