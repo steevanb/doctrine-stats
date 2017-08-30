@@ -545,7 +545,7 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
     {
         $return = [];
         /** @var EntityManagerInterface $entityManager */
-        foreach ($this->doctrine->getEntityManagers() as $entityManager) {
+        foreach ($this->doctrine->getManagers() as $entityManager) {
             foreach ($entityManager->getUnitOfWork()->getIdentityMap() as $class => $entities) {
                 $return[$class] = [
                     'count' => count($entities),
