@@ -12,7 +12,8 @@
     },
     "require": {
         "php" : "^5.4.0 || ^7.0",
-        "doctrine/orm": "^2.4.8"
+        "doctrine/orm": "^2.4.8",
+        "symfony/doctrine-bridge": ">=2.1"
     },
     "suggest": {
         "steevanb/composer-overload-class ^1.0": "Add hydration time to statistics",
