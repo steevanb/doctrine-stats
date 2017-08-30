@@ -20,7 +20,7 @@ Add important Doctrine statistics :
 ### Installation
 
 ```bash
-composer require "steevanb/doctrine-stats": "^1.3.1"
+composer require --dev "steevanb/doctrine-stats": "^1.3.1"
 ```
 
 If you want to add hydration time to your statistics :
