@@ -544,9 +544,12 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
     protected function parseManagedEntities()
     {
         $return = [];
-        /** @var EntityManagerInterface $entityManager */
-        foreach ($this->doctrine->getEntityManagers() as $entityManager) {
-            foreach ($entityManager->getUnitOfWork()->getIdentityMap() as $class => $entities) {
+        foreach ($this->doctrine->getManagers() as $manager) {
+            if (!$manager instanceof EntityManagerInterface) {
+                continue;
+            }
+
+            foreach ($manager->getUnitOfWork()->getIdentityMap() as $class => $entities) {
                 $return[$class] = [
                     'count' => count($entities),
                     'ids' => array_keys($entities)
