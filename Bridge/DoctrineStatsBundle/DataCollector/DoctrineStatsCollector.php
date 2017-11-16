@@ -545,7 +545,7 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
     {
         $return = [];
         foreach ($this->doctrine->getManagers() as $manager) {
-            if (!$manager instanceof EntityManagerInterface) {
+            if ($manager instanceof EntityManagerInterface === false) {
                 continue;
             }
 
