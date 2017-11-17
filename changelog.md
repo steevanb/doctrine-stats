@@ -1,3 +1,7 @@
+### [1.3.2](../../compare/1.3.1...1.3.2) - 2017-11-17
+
+- [[gsdevme](https://github.com/gsdevme)] Use _ManagerRegistry::getManagers()_ instead of _getEntityManagers()_
+
 ### [1.3.1](../../compare/1.3.0...1.3.1) - 2017-08-09
 
 - Fix ternary operator syntax in _DoctrineStatsCollector_
