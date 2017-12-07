@@ -59,6 +59,11 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
         return 'doctrine_stats';
     }
 
+    public function reset()
+    {
+        $this->data = [];
+    }
+
     /**
      * @param int $count
      * @return $this
