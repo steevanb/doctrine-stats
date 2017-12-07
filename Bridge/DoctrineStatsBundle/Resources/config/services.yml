@@ -7,7 +7,7 @@ services:
             -
                 name: data_collector
                 id: doctrine_stats
-                template: 'DoctrineStatsBundle:DataCollector:template.html.twig'
+                template: '@DoctrineStats/DataCollector/template.html.twig'
                 priority: 249
 
     doctrine_stats.event_subscriber.doctrine:
