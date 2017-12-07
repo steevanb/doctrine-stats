@@ -1,3 +1,8 @@
+### [1.3.3](../../compare/1.3.2...1.3.3) - 2017-12-07
+
+- [[Gemorroj](https://github.com/Gemorroj)] Fix template path for Symfony 4
+- Add _DoctrineStatsCollector::reset()_ for Symfony 4
+
 ### [1.3.2](../../compare/1.3.1...1.3.2) - 2017-11-17
 
 - [[gsdevme](https://github.com/gsdevme)] Use _ManagerRegistry::getManagers()_ instead of _getEntityManagers()_
