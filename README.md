@@ -69,27 +69,28 @@ If you want to add hydration time to your statistics :
 composer update steevanb/composer-overload-class
 ```
 
-### Symfony 2.x, 3.x and 4.x integration
+### Symfony integration
 
 Read Installation paragraph before.
 
+#### Symfony 2.x, 3.x and 4.x
+
+_Use version 1.3.x of this bundle._
+
+#### Symfony 5.x
+
 ```php
-### app/AppKernel.php
-class AppKernel
-{
-    public function registerBundles()
-    {
-        if ($this->getEnvironment() === 'dev') {
-            $bundles[] = new \steevanb\DoctrineStats\Bridge\DoctrineStatsBundle\DoctrineStatsBundle();
-        }
-    }
-}
+### config/bundles.php
+return [
+    // ...
+    \steevanb\DoctrineStats\Bridge\DoctrineStatsBundle\DoctrineStatsBundle::class => ['dev' => true],
+];
 ```
 
-If you want to add lazy loaded entities to your statistics :
+If you want to add lazy loaded entities to your statistics:
 
 ```yml
-### app/config/config_dev.yml
+### config/services_dev.yaml (you may have to create that file)
 parameters:
     doctrine.orm.entity_manager.class: steevanb\DoctrineStats\Doctrine\ORM\EntityManager
 ```
