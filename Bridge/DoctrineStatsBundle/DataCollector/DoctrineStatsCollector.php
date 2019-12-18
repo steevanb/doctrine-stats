@@ -184,7 +184,7 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
      * @param Response $response
      * @param \Exception|null $exception
      */
-    public function collect(Request $request, Response $response, \Exception $exception = null)
+    public function collect(Request $request, Response $response, \Throwable $exception = null)
     {
         $this->data = [
             'lazyLoadedEntities' => $this->lazyLoadedEntities,

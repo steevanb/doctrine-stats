@@ -265,18 +265,18 @@
                             {{ queries.data|length }}
                         </span>
                     </td>
-                    <td class="nowrap">{% spaceless %}
+                    <td class="nowrap">{% apply spaceless %}
                         {% if queries.lazyLoadedEntities|length > 0 %}
                             <span class="badge metric-red">Lazy loading</span>
                         {% else %}
                             Manual
                         {% endif %}
-                    {% endspaceless %}</td>
-                    <td class="nowrap">{% spaceless %}
+                    {% endapply %}</td>
+                    <td class="nowrap">{% apply spaceless %}
                         <img src="http://www.dustball.com/icons/icons/database.png" title="SQL time" /> {{ '%0.2f'|format(queries.queryTime) }}&nbsp;ms ({{ queries.queryTimePercent }}%)<br />
                         <img src="http://www.dustball.com/icons/icons/page_white_php.png" title="Hydration time" /> {{ '%0.2f'|format(queries.hydrationTime) }}&nbsp;ms ({{ queries.hydrationTimePercent }}%)<br />
                         <img src="http://www.dustball.com/icons/icons/time.png" title="Total time" /> {{ '%0.2f'|format(queries.queryTime + queries.hydrationTime) }}&nbsp;ms
-                    {% endspaceless %}</td>
+                    {% endapply %}</td>
                     <td>
                         <div>{{ sql|doctrine_pretty_query(highlight_only = true) }}</div>
 
@@ -510,10 +510,10 @@
 {% endblock %}
 
 {% macro className(classNameParts) %}
-    {% spaceless %}
+    {% apply spaceless %}
         <span class="text-muted">{{ classNameParts.namespace }}\</span>
         <span class="text-bold">{{ classNameParts.className }}</span>
-    {% endspaceless %}
+    {% endapply %}
 {% endmacro %}
 
 {% macro identifiers(collector, identifiers, merged = false) %}
