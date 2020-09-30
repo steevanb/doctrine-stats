@@ -2,7 +2,7 @@
 
 namespace steevanb\DoctrineStats\Bridge\DoctrineStatsBundle\DataCollector;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use steevanb\DoctrineStats\Bridge\DoctrineCollectorInterface;
 use steevanb\DoctrineStats\Doctrine\DBAL\Logger\SqlLogger;

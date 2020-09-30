@@ -10,6 +10,9 @@
             "steevanb\\DoctrineStats\\EventSubscriber\\": "EventSubscriber"
         }
     },
+    "config": {
+        "doctrine/persistence": "<1.3"
+    },
     "require": {
         "php" : "^5.4.0 || ^7.0",
         "doctrine/orm": "^2.4.8"
