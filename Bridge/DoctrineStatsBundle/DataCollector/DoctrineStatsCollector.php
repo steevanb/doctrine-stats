@@ -5,7 +5,7 @@ namespace steevanb\DoctrineStats\Bridge\DoctrineStatsBundle\DataCollector;
 use Doctrine\ORM\EntityManagerInterface;
 use steevanb\DoctrineStats\Bridge\DoctrineCollectorInterface;
 use steevanb\DoctrineStats\Doctrine\DBAL\Logger\SqlLogger;
-use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
@@ -39,13 +39,13 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
     /** @var array */
     protected $hydratedEntities = [];
 
-    /** @var RegistryInterface */
+    /** @var ManagerRegistry */
     protected $doctrine;
 
     /**
      * @param SqlLogger $sqlLogger
      */
-    public function __construct(SqlLogger $sqlLogger, RegistryInterface $doctrine)
+    public function __construct(SqlLogger $sqlLogger, ManagerRegistry $doctrine)
     {
         $this->sqlLogger = $sqlLogger;
         $this->doctrine = $doctrine;
