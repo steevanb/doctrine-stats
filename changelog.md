@@ -1,3 +1,7 @@
+### [1.4.0](../../compare/1.3.3...1.4.0) - 2020-12-07
+
+- Replace `Symfony\Bridge\Doctrine\RegistryInterface` (removed) by `Doctrine\Common\Persistence\ManagerRegistry` in `DoctrineStatsCollector`
+
 ### [1.3.3](../../compare/1.3.2...1.3.3) - 2017-12-07
 
 - [[Gemorroj](https://github.com/Gemorroj)] Fix template path for Symfony 4

@@ -1,26 +1,25 @@
-[![version](https://img.shields.io/badge/version-1.3.3-green.svg)](https://github.com/steevanb/doctrine-stats/tree/1.3.3)
+[![version](https://img.shields.io/badge/version-1.4.0-green.svg)](https://github.com/steevanb/doctrine-stats/tree/1.4.0)
 [![doctrine](https://img.shields.io/badge/doctrine/orm-^2.4.8-blue.svg)](http://www.doctrine-project.org)
 [![php](https://img.shields.io/badge/php-^5.4.6%20||%20^7.0-blue.svg)](http://www.php.net)
-![Lines](https://img.shields.io/badge/code%20lines-2153-green.svg)
+![Lines](https://img.shields.io/badge/code%20lines-2162-green.svg)
 ![Total Downloads](https://poser.pugx.org/steevanb/doctrine-stats/downloads)
-[![SensionLabsInsight](https://img.shields.io/badge/SensionLabsInsight-platinum-brightgreen.svg)](https://insight.sensiolabs.com/projects/884a7b62-bb7a-41dc-8198-6d2bb0694795/analyses/28)
 [![Scrutinizer](https://scrutinizer-ci.com/g/steevanb/doctrine-stats/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/steevanb/doctrine-stats/)
 
 ### doctrine-stats
 
 Add important Doctrine statistics :
-* count managed entities
-* count lazy loaded entities
-* hydration time by hydrator and query
-* group queries by query string, show differents parameters used by same query string
-* count different query string used
+* Count managed entities
+* Count lazy loaded entities
+* Hydration time by hydrator and query
+* Group queries by query string, show differents parameters used by same query string
+* Count different query string used
 
 [Changelog](changelog.md)
 
 ### Installation
 
 ```bash
-composer require --dev "steevanb/doctrine-stats": "^1.3.3"
+composer require --dev "steevanb/doctrine-stats": "^1.4"
 ```
 
 If you want to add hydration time to your statistics :
