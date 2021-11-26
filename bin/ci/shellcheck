@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+
+set -eu
+
+readonly ROOT_DIR="$(realpath "$(dirname "$(realpath "$0")")/../..")"
+source "${ROOT_DIR}"/config/docker.inc.bash
+
+BIN_DIR=bin/ci
+source "${ROOT_DIR}"/bin/dockerise.inc.bash
+
+readonly binaries=(
+    bin/ci/composer-validate
+    bin/ci/composer-normalize
+    bin/ci/docker
+    bin/ci/env
+    bin/ci/infection
+    bin/ci/phpcs
+    bin/ci/phpdd
+    bin/ci/phpstan
+    bin/ci/phpunit
+    bin/ci/phpunit-coverage
+    bin/ci/shellcheck
+    bin/ci/unused-scanner
+    bin/ci/validate
+    bin/dev/env
+    bin/dev/start
+    bin/prod/env
+    bin/prod/start
+    bin/release/changelog
+    bin/release/code-lines
+    bin/release/docker
+    bin/release/env
+    bin/release/infection
+    bin/release/phpunit-assertions
+    bin/release/phpunit-coverage
+    bin/release/phpunit-prepare
+    bin/release/phpunit-tests
+    bin/release/prepare
+    bin/composer
+    bin/docker-build.inc.bash
+    bin/dockerise.inc.bash
+    config/docker.inc.bash
+)
+
+exitCode=0
+for binary in "${binaries[@]}"; do
+    set +e
+    # SC1090: Can't follow non-constant source. Use a directive to specify location.
+    # SC2034: DOCKER_CI_IMAGE_NAME appears unused. Verify use (or export if used externally).
+    # SC2086: Double quote to prevent globbing and word splitting. (needed for ${DOCKER_INTERACTIVE_PARAMETER})
+    # SC2181: Check exit code directly with e.g. 'if mycmd;', not indirectly with $?.
+    shellcheck --color=always --exclude SC1090,SC2034,SC2086,SC2181 "${binary}"
+    if [ ${?} != 0 ]; then
+        exitCode=1
+    fi
+    set -e
+done
+
+if [ "${exitCode}" == 0 ]; then
+    echo -e "\e[42m All files contains valid syntax. \e[0m"
+fi
+exit ${exitCode}

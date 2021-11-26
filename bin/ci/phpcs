@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+set -eu
+
+readonly ROOT_DIR="$(realpath "$(dirname "$(realpath "$0")")/../..")"
+source "${ROOT_DIR}"/config/docker.inc.bash
+
+BIN_DIR=bin/ci
+source "${ROOT_DIR}"/bin/dockerise.inc.bash
+
+if [ ! -d "${ROOT_DIR}"/var/ci/phpcs ]; then
+    mkdir -p "${ROOT_DIR}"/var/ci/phpcs
+fi
+
+phpcs \
+    -p \
+    --warning-severity=0 \
+    --ignore=/vendor/,/var/,src/Doctrine/ORM/EntityManager.php \
+    --bootstrap=config/ci/phpcs.php \
+    --standard="${COMPOSER_HOME}"/vendor/steevanb/php-code-sniffs/src/Steevanb/ruleset.xml \
+    --report=steevanb\\PhpCodeSniffs\\Reports\\Steevanb \
+    --cache="${ROOT_DIR}"/var/ci/phpcs/cache \
+    . \
+    "${@}"

@@ -1,0 +1,11 @@
+{
+    "source": {
+        "directories": [
+            "src"
+        ]
+    },
+    "mutators": {
+        "@default": true
+    },
+    "tmpDir": "../../var/ci"
+}

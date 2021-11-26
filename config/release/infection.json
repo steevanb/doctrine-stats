@@ -1,0 +1,14 @@
+{
+    "source": {
+        "directories": [
+            "src"
+        ]
+    },
+    "mutators": {
+        "@default": true
+    },
+    "tmpDir": "../../var/release/infection",
+    "logs": {
+        "json": "var/release/infection/logs.json"
+    }
+}

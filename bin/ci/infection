@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+set -eu
+
+readonly ROOT_DIR="$(realpath "$(dirname "$(realpath "$0")")/../..")"
+source "${ROOT_DIR}"/config/docker.inc.bash
+
+BIN_DIR=bin/ci
+source "${ROOT_DIR}"/bin/dockerise.inc.bash
+
+XDEBUG_MODE=coverage \
+    infection \
+        --configuration=config/ci/infection.json \
+        --threads=10 \
+        --only-covered \
+        --show-mutations \
+        --ansi \
+        "${@}"

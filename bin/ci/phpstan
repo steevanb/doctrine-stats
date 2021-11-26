@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+set -eu
+
+readonly ROOT_DIR="$(realpath "$(dirname "$(realpath "$0")")/../..")"
+source "${ROOT_DIR}"/config/docker.inc.bash
+
+BIN_DIR=bin/ci
+source "${ROOT_DIR}"/bin/dockerise.inc.bash
+
+phpVersion=
+phpstanParameters=
+clearCache=false
+for arg in "${@}"; do
+    if [ "${arg:0:6}" == "--php=" ]; then
+        phpVersion="${arg:6}"
+    elif [ "${arg}" == "--clear-cache" ]; then
+        clearCache=true
+    else
+        phpstanParameters="${phpstanParameters} ${arg}"
+    fi
+done
+
+if [ "${clearCache}" == true ] && [ -d "${ROOT_DIR}"/var/ci/phpstan ]; then
+    echo "Clear cache"
+    rm -rf "${ROOT_DIR}"/var/ci/phpstan
+fi
+
+if [ "${phpVersion}" == "" ]; then
+    php8.0 "${ROOT_DIR}"/bin/ci/phpstan.php ${phpstanParameters}
+else
+    echo "PHP ${phpVersion}"
+
+    "php${phpVersion}" \
+        "${PHPSTAN_BIN_PATH}" \
+            analyse \
+                --ansi \
+                --configuration config/ci/phpstan.php-"${phpVersion}".neon \
+                ${phpstanParameters}
+fi

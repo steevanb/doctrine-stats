@@ -1,0 +1,20 @@
+parameters:
+    level: 8
+    paths:
+        - ../../src
+        - ../../tests
+    checkGenericClassInNonGenericObjectType: false
+includes:
+    - /composer/vendor/phpstan/phpstan-deprecation-rules/rules.neon
+    - /composer/vendor/phpstan/phpstan-phpunit/rules.neon
+    - /composer/vendor/phpstan/phpstan-strict-rules/rules.neon
+    - /composer/vendor/spaze/phpstan-disallowed-calls/extension.neon
+    - /composer/vendor/spaze/phpstan-disallowed-calls/disallowed-dangerous-calls.neon
+    - /composer/vendor/spaze/phpstan-disallowed-calls/disallowed-execution-calls.neon
+    - /composer/vendor/spaze/phpstan-disallowed-calls/disallowed-insecure-calls.neon
+    - /composer/vendor/spaze/phpstan-disallowed-calls/disallowed-loose-calls.neon
+rules:
+    - Ergebnis\PHPStan\Rules\Classes\PHPUnit\Framework\TestCaseWithSuffixRule
+    - Ergebnis\PHPStan\Rules\Expressions\NoErrorSuppressionRule
+    - Ergebnis\PHPStan\Rules\Expressions\NoIssetRule
+    - Ergebnis\PHPStan\Rules\Files\DeclareStrictTypesRule
