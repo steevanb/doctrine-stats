@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+set -eu
+
+readonly ROOT_DIR="$(realpath "$(dirname "$(realpath "$0")")/../..")"
+source "${ROOT_DIR}"/config/docker.inc.bash
+
+DOCKER_IMAGE_NAME="${DOCKER_CI_IMAGE_NAME}"
+DOCKER_FILE_PATH="${ROOT_DIR}"/docker/ci/Dockerfile
+source "${ROOT_DIR}"/bin/docker-build.inc.bash

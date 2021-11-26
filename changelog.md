@@ -1,3 +1,13 @@
+### master
+
+- [BC break] Move source files to `src/`
+- [BC break] Move `ComposerOverloadClass` directory from source root to `src/Bridge/ComposerOverloadClass`
+- [BC break] Change PHP version from `^5.4 || ^7.0` to `^7.1 || ^8.0`
+- Rename root namespace from `steevanb` to `Steevanb`
+- Add PHP 7.1 type hints
+- Add `bin`, `config` and `docker` directories
+- Add binaries to start the project, build Docker images, run CI tools etc
+
 ### [1.4.0](../../compare/1.3.3...1.4.0) - 2020-12-07
 
 - Replace `Symfony\Bridge\Doctrine\RegistryInterface` (removed) by `Doctrine\Common\Persistence\ManagerRegistry` in `DoctrineStatsCollector`
@@ -70,4 +80,3 @@
 - Add ArrayHydrator, ObjectHydrator, ScalarHydrator, SimpleObjectHydrator and SingleScalarHydrator
 to ComposerOverloadClass, to add preHydration and postHydration events
 - Add Symfony2 and Symfony3 bridge with DoctrineStatsBundle
-

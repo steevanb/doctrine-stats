@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+set -eu
+
+readonly ROOT_DIR="$(realpath "$(dirname "$(realpath "$0")")/../..")"
+source "${ROOT_DIR}"/config/docker.inc.bash
+
+BIN_DIR=bin/ci
+COMPOSER_HOME=/app/var/composer
+source "${ROOT_DIR}"/bin/dockerise.inc.bash
+
+composer validate --ansi --strict

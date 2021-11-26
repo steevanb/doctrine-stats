@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+set -eu
+
+readonly ROOT_DIR="$(realpath "$(dirname "$(realpath "$0")")/../..")"
+source "${ROOT_DIR}"/config/docker.inc.bash
+
+BIN_DIR=bin/ci
+source "${ROOT_DIR}"/bin/dockerise.inc.bash
+
+echo "PHP 8.0"
+XDEBUG_MODE=coverage \
+    php8.0 \
+        "${ROOT_DIR}"/vendor/bin/phpunit \
+            --coverage-html "${ROOT_DIR}"/var/ci/phpunit/coverage/html \
+            --configuration "${ROOT_DIR}"/config/ci/phpunit.php-8.0.xml \
+            "${@}"
+
+printf "Open \e[33mvar/ci/phpunit/coverage/html/index.html\e[0m in your browser to see code coverage results.\n"

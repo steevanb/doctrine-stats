@@ -24,12 +24,9 @@ composer require --dev "steevanb/doctrine-stats": "^1.4"
 
 If you want to add hydration time to your statistics :
 
+`composer.json`
 ```json
-# composer.json
 {
-    "require-dev": {
-        "steevanb/composer-overload-class": "^1.1"
-    },
     "autoload": {
         "psr-4": {
             "ComposerOverloadClass\\": "var/cache/ComposerOverloadClass"
@@ -43,30 +40,30 @@ If you want to add hydration time to your statistics :
         "composer-overload-class-dev": {
             "Doctrine\\ORM\\Internal\\Hydration\\ArrayHydrator": {
                 "original-file": "vendor/doctrine/orm/lib/Doctrine/ORM/Internal/Hydration/ArrayHydrator.php",
-                "overload-file": "vendor/steevanb/doctrine-stats/ComposerOverloadClass/Doctrine/ORM/Internal/ArrayHydrator.php"
+                "overload-file": "vendor/steevanb/doctrine-stats/src/Bridge/ComposerOverloadClass/Doctrine/ORM/Internal/ArrayHydrator.php"
             },
             "Doctrine\\ORM\\Internal\\Hydration\\ObjectHydrator": {
                 "original-file": "vendor/doctrine/orm/lib/Doctrine/ORM/Internal/Hydration/ObjectHydrator.php",
-                "overload-file": "vendor/steevanb/doctrine-stats/ComposerOverloadClass/Doctrine/ORM/Internal/ObjectHydrator.php"
+                "overload-file": "vendor/steevanb/doctrine-stats/src/Bridge/ComposerOverloadClass/Doctrine/ORM/Internal/ObjectHydrator.php"
             },
             "Doctrine\\ORM\\Internal\\Hydration\\ScalarHydrator": {
                 "original-file": "vendor/doctrine/orm/lib/Doctrine/ORM/Internal/Hydration/ScalarHydrator.php",
-                "overload-file": "vendor/steevanb/doctrine-stats/ComposerOverloadClass/Doctrine/ORM/Internal/ScalarHydrator.php"
+                "overload-file": "vendor/steevanb/doctrine-stats/src/Bridge/ComposerOverloadClass/Doctrine/ORM/Internal/ScalarHydrator.php"
             },
             "Doctrine\\ORM\\Internal\\Hydration\\SimpleObjectHydrator": {
                 "original-file": "vendor/doctrine/orm/lib/Doctrine/ORM/Internal/Hydration/SimpleObjectHydrator.php",
-                "overload-file": "vendor/steevanb/doctrine-stats/ComposerOverloadClass/Doctrine/ORM/Internal/SimpleObjectHydrator.php"
+                "overload-file": "vendor/steevanb/doctrine-stats/src/Bridge/ComposerOverloadClass/Doctrine/ORM/Internal/SimpleObjectHydrator.php"
             },
             "Doctrine\\ORM\\Internal\\Hydration\\SingleScalarHydrator": {
                 "original-file": "vendor/doctrine/orm/lib/Doctrine/ORM/Internal/Hydration/SingleScalarHydrator.php",
-                "overload-file": "vendor/steevanb/doctrine-stats/ComposerOverloadClass/Doctrine/ORM/Internal/SingleScalarHydrator.php"
+                "overload-file": "vendor/steevanb/doctrine-stats/src/Bridge/ComposerOverloadClass/Doctrine/ORM/Internal/SingleScalarHydrator.php"
             }
         }
     }
 }
 ```
 ```bash
-composer update steevanb/composer-overload-class
+composer dumpautoload
 ```
 
 ### Symfony 2.x, 3.x and 4.x integration
@@ -74,13 +71,13 @@ composer update steevanb/composer-overload-class
 Read Installation paragraph before.
 
 ```php
-### app/AppKernel.php
+# app/AppKernel.php
 class AppKernel
 {
     public function registerBundles()
     {
         if ($this->getEnvironment() === 'dev') {
-            $bundles[] = new \steevanb\DoctrineStats\Bridge\DoctrineStatsBundle\DoctrineStatsBundle();
+            $bundles[] = new \Steevanb\DoctrineStats\Bridge\DoctrineStatsBundle\DoctrineStatsBundle();
         }
     }
 }
@@ -89,16 +86,16 @@ class AppKernel
 If you want to add lazy loaded entities to your statistics :
 
 ```yml
-### app/config/config_dev.yml
+# app/config/config_dev.yml
 parameters:
-    doctrine.orm.entity_manager.class: steevanb\DoctrineStats\Doctrine\ORM\EntityManager
+    doctrine.orm.entity_manager.class: Steevanb\DoctrineStats\Doctrine\ORM\EntityManager
 ```
 
 ### Manual integration
 
-To retrieve statistics, you need to register steevanb\DoctrineStats\EventSubscriber\DoctrineEventSubscriber in your event manager.
+To retrieve statistics, you need to register `Steevanb\DoctrineStats\EventSubscriber\DoctrineEventSubscriber` in your event manager.
 
-If you want to add lazy loaded entities to your statistics, you need to overload default EntityManager, with steevanb\DoctrineStats\Doctrine\ORM\EntityManager.
+If you want to add lazy loaded entities to your statistics, you need to overload default EntityManager, with `Steevanb\DoctrineStats\Doctrine\ORM\EntityManager`.
 
 ### Screenshots
 

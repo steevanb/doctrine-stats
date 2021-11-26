@@ -1,0 +1,73 @@
+name: CI
+on: [push]
+
+jobs:
+    composer-normalize:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - run: bin/ci/composer-normalize
+
+    composer-validate:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - run: bin/ci/composer-validate
+
+    phpcs:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - run: bin/ci/phpcs
+
+    phpdd:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - run: bin/ci/phpdd
+
+    phpstan:
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                php-version: [--php=7.1, --php=7.2, --php=7.3, --php=7.4, --php=8.0]
+        steps:
+            - uses: actions/checkout@v2
+            -
+                name: Composer cache
+                uses: actions/cache@v2
+                with:
+                    path: vendor
+                    key: composer-${{ hashFiles('composer.json') }}-phpstan-php-${{ matrix.php-version }}
+                    restore-keys: composer-${{ hashFiles('composer.json') }}-phpstan-php-${{ matrix.php-version }}
+            - run: bin/ci/env
+            - run: bin/ci/phpstan ${{ matrix.php-version }}
+
+    phpunit:
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                php-version: [--php=7.2, --php=7.3, --php=7.4, --php=8.0]
+        steps:
+            - uses: actions/checkout@v2
+            -
+                name: Composer cache
+                uses: actions/cache@v2
+                with:
+                    path: vendor
+                    key: composer-${{ hashFiles('composer.json') }}-phpunit-php-${{ matrix.php-version }}
+                    restore-keys: composer-${{ hashFiles('composer.json') }}-phpunit-php-${{ matrix.php-version }}
+            - run: bin/ci/env
+            - run: bin/ci/phpunit ${{ matrix.php-version }}
+
+    shellcheck:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - run: bin/ci/shellcheck
+
+    unused-scanner:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - run: bin/ci/unused-scanner

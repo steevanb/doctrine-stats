@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+set -eu
+
+readonly ROOT_DIR="$(realpath "$(dirname "$(realpath "$0")")/../..")"
+
+"${ROOT_DIR}"/bin/dev/env

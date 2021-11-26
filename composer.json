@@ -1,27 +1,39 @@
 {
     "name": "steevanb/doctrine-stats",
+    "description": "Count managed and lazy loaded entities, hydration time etc",
     "license": "MIT",
-    "description": "Count managed entities and lazy loaded entities, hydration time, etc",
-    "minimum-stability": "dev",
-    "autoload": {
-        "psr-4": {
-            "steevanb\\DoctrineStats\\Bridge\\": "Bridge",
-            "steevanb\\DoctrineStats\\Doctrine\\": "Doctrine",
-            "steevanb\\DoctrineStats\\EventSubscriber\\": "EventSubscriber"
-        }
-    },
     "require": {
-        "php" : "^5.4.0 || ^7.0",
+        "php": "^7.1 || ^8.0",
         "doctrine/orm": "^2.4.8"
+    },
+    "require-dev": {
+        "doctrine/persistence": "^2.0",
+        "phpunit/phpunit": "8.5.*",
+        "symfony/config": "^5.0",
+        "symfony/dependency-injection": "^5.0",
+        "symfony/http-foundation": "^5.0",
+        "symfony/http-kernel": "^5.0"
     },
     "suggest": {
         "steevanb/composer-overload-class ^1.0": "Add hydration time to statistics",
         "steevanb/php-backtrace ^1.1": "Add backtrace to queries"
     },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/steevanb/doctrine-stats.git"
+    "config": {
+        "cache-dir": "/app/var/composer/cache",
+        "sort-packages": true
+    },
+    "autoload": {
+        "psr-4": {
+            "Steevanb\\DoctrineStats\\": "src/"
         }
-    ]
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "@rm-composer-lock"
+        ],
+        "post-update-cmd": [
+            "@rm-composer-lock"
+        ],
+        "rm-composer-lock": "rm composer.lock"
+    }
 }

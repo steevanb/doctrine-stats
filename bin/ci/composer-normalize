@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+set -eu
+
+readonly ROOT_DIR="$(realpath "$(dirname "$(realpath "$0")")/../..")"
+source "${ROOT_DIR}"/config/docker.inc.bash
+
+"${ROOT_DIR}"/bin/composer normalize --ansi "${@}"
