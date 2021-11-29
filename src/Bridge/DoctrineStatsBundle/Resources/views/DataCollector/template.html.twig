@@ -28,7 +28,7 @@
             </span>
         </div>
         <div class="sf-toolbar-info-piece">
-            <b>Queries time</b>
+            <b>SQL</b>
             <span class="sf-toolbar-status">
                 {{ collector.getQueriesTime() }} ms
                 {% if collector.isHydratorsOverloaded() %}
@@ -36,27 +36,21 @@
                 {% endif %}
             </span>
         </div>
-        <div class="sf-toolbar-info-piece">
-            <b>Hydration time</b>
-            <span class="sf-toolbar-status{% if collector.getHydrationTotalTime() >= collector.getHydrationTimeAlert() %} sf-toolbar-status-red{% endif %}">
-                {% if collector.isHydratorsOverloaded() %}
+        {% if collector.isHydratorsOverloaded() %}
+            <div class="sf-toolbar-info-piece">
+                <b>Hydration</b>
+                <span class="sf-toolbar-status{% if collector.getHydrationTotalTime() >= collector.getHydrationTimeAlert() %} sf-toolbar-status-red{% endif %}">
                     {{ collector.getHydrationTotalTime() }} ms
                     ({{ collector.getHydrationTimePercent() }}%)
-                {% else %}
-                    ?
-                {% endif %}
-            </span>
-        </div>
-        <div class="sf-toolbar-info-piece">
-            <b>Doctrine time</b>
-            <span class="sf-toolbar-status">
-                {% if collector.isHydratorsOverloaded() %}
+                </span>
+            </div>
+            <div class="sf-toolbar-info-piece">
+                <b>Total</b>
+                <span class="sf-toolbar-status">
                     {{ collector.getDoctrineTime() }} ms
-                {% else %}
-                    ?
-                {% endif %}
-            </span>
-        </div>
+                </span>
+            </div>
+        {% endif %}
         <div class="sf-toolbar-info-piece">
             <b>Managed entit{% if collector.countManagedEntities() > 1 %}ies{% else %}y{% endif %}</b>
             <span class="sf-toolbar-status{% if collector.countManagedEntities() >= collector.getManagedEntitiesAlert() %} sf-toolbar-status-red{% endif %}">
@@ -178,7 +172,7 @@
         </div>
         <div class="metric">
             <span class="value">{{ collector.getQueriesTime() }} <span class="text-small">ms</span></span>
-            <span class="label">Queries ({{ collector.getQueriesTimePercent() }}%)</span>
+            <span class="label">SQL ({{ collector.getQueriesTimePercent() }}%)</span>
         </div>
         {% if collector.isHydratorsOverloaded() == false %}
             {% set panelClass = 'metric-disabled' %}
@@ -195,7 +189,7 @@
                 {% if collector.isHydratorsOverloaded() %}
                     {{ collector.getHydrationTotalTime() }} <span class="text-small">ms</span>
                 {% else %}
-                    ?
+                    -
                 {% endif %}
             </span>
             <span class="label">
@@ -206,25 +200,17 @@
                 {% endif %}
             </span>
         </div>
-        <div class="metric {{ panelClass }}">
-            <span class="value">
-                {% if collector.isHydratorsOverloaded() %}
+        {% if collector.isHydratorsOverloaded() %}
+            <div class="metric {{ panelClass }}">
+                <span class="value">
                     {{ collector.getDoctrineTime() }} <span class="text-small">ms</span>
-                {% else %}
-                    ?
-                {% endif %}
-            </span>
-            <span class="label">
-                {% if collector.isHydratorsOverloaded() %}
-                    Doctrine
-                {% else %}
-                    Doctrine (disabled)
-                {% endif %}
-            </span>
-        </div>
+                </span>
+                <span class="label">Total</span>
+            </div>
+        {% endif %}
         <div class="metric{% if collector.countManagedEntities() >= collector.getManagedEntitiesAlert() %} metric-red{% endif %}">
             <span class="value">{{ collector.countManagedEntities() }}</span>
-            <span class="label">Managed entities</span>
+            <span class="label">Managed entit{% if collector.countManagedEntities() <= 1 %}y{% else %}ies{% endif %}</span>
         </div>
         <div class="metric{% if collector.countLazyLoadedEntities() >= collector.getLazyLoadedEntitiesAlert() %} metric-red{% endif %}">
             <span class="value">{{ collector.countLazyLoadedEntities() }}</span>
@@ -234,7 +220,7 @@
 
     {% if collector.isHydratorsOverloaded() == false %}
         <div class="alert-help">
-            You can show hydration time and Doctrine time by configuring
+            You can see hydration time and total time by configuring
             <a href="https://github.com/steevanb/composer-overload-class" target="_blank">steevanb/composer-overload-class</a>
             (<a href="https://github.com/steevanb/doctrine-stats/blob/master/README.md" target="_blank">view how to configure it</a>).
         </div>
@@ -265,18 +251,20 @@
                             {{ queries.data|length }}
                         </span>
                     </td>
-                    <td class="nowrap">{% spaceless %}
+                    <td class="nowrap">{% apply spaceless %}
                         {% if queries.lazyLoadedEntities|length > 0 %}
                             <span class="badge metric-red">Lazy loading</span>
                         {% else %}
                             Manual
                         {% endif %}
-                    {% endspaceless %}</td>
-                    <td class="nowrap">{% spaceless %}
-                        <img src="http://www.dustball.com/icons/icons/database.png" title="SQL time" /> {{ '%0.2f'|format(queries.queryTime) }}&nbsp;ms ({{ queries.queryTimePercent }}%)<br />
-                        <img src="http://www.dustball.com/icons/icons/page_white_php.png" title="Hydration time" /> {{ '%0.2f'|format(queries.hydrationTime) }}&nbsp;ms ({{ queries.hydrationTimePercent }}%)<br />
-                        <img src="http://www.dustball.com/icons/icons/time.png" title="Total time" /> {{ '%0.2f'|format(queries.queryTime + queries.hydrationTime) }}&nbsp;ms
-                    {% endspaceless %}</td>
+                    {% endapply %}</td>
+                    <td class="nowrap">{% apply spaceless %}
+                        <img src="http://www.dustball.com/icons/icons/database.png" title="SQL" /> {{ '%0.2f'|format(queries.queryTime) }}&nbsp;ms ({{ queries.queryTimePercent }}%)<br />
+                        {% if collector.isHydratorsOverloaded() %}
+                            <img src="http://www.dustball.com/icons/icons/page_white_php.png" title="Hydration" /> {{ '%0.2f'|format(queries.hydrationTime) }}&nbsp;ms ({{ queries.hydrationTimePercent }}%)<br />
+                            <img src="http://www.dustball.com/icons/icons/time.png" title="Total" /> {{ '%0.2f'|format(queries.queryTime + queries.hydrationTime) }}&nbsp;ms
+                        {% endif %}
+                    {% endapply %}</td>
                     <td>
                         <div>{{ sql|doctrine_pretty_query(highlight_only = true) }}</div>
 
@@ -510,10 +498,10 @@
 {% endblock %}
 
 {% macro className(classNameParts) %}
-    {% spaceless %}
+    {% apply spaceless %}
         <span class="text-muted">{{ classNameParts.namespace }}\</span>
         <span class="text-bold">{{ classNameParts.className }}</span>
-    {% endspaceless %}
+    {% endapply %}
 {% endmacro %}
 
 {% macro identifiers(collector, identifiers, merged = false) %}
