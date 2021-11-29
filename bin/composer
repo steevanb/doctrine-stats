@@ -7,4 +7,4 @@ source "${ROOT_DIR}"/config/docker.inc.bash
 
 source "${ROOT_DIR}"/bin/dockerise.inc.bash
 
-php7.2 /usr/local/bin/composer "${@}"
+php7.4 /usr/local/bin/composer "${@}"

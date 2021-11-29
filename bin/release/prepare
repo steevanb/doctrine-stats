@@ -34,7 +34,7 @@ function updateReleaseBadge() {
 
     echo "Edit release badge in README.md"
 
-    local badge="[![Version](https:\/\/img.shields.io\/badge\/version-${version}-4B9081.svg)](https:\/\/github.com\/php-pp\/core\/tree\/${version})"
+    local badge="[![Version](https:\/\/img.shields.io\/badge\/version-${version}-4B9081.svg)](https:\/\/github.com\/steevanb\/doctrine-stats\/tree\/${version})"
     sed -i "1s/.*/${badge}/" "${rootDir}"/README.md
 }
 
@@ -49,79 +49,12 @@ function updateCodeLinesBadge() {
     sed -i "4s/.*/${badge}/" "${rootDir}"/README.md
 }
 
-function updateCoverageBadge() {
-    trap onError ERR
-
-    coveragePercent="$(${rootDir}/bin/release/phpunit-coverage)"
-    echo "Coverage: ${coveragePercent}%"
-
-    echo "Edit coverage in README.md"
-    local badge="![Coverage](https:\/\/img.shields.io\/badge\/coverage-${coveragePercent}%25-success.svg)"
-    sed -i "10s/.*/${badge}/" "${rootDir}"/README.md
-}
-
-function updateTestsBadge() {
-    trap onError ERR
-
-    tests="$(${rootDir}/bin/release/phpunit-tests)"
-    echo "Tests: ${tests}"
-
-    echo "Edit tests in README.md"
-    local badge="![Tests](https:\/\/img.shields.io\/badge\/tests-${tests}-blue.svg)"
-    sed -i "8s/.*/${badge}/" "${rootDir}"/README.md
-}
-
-function updateAssertionsBadge() {
-    trap onError ERR
-
-    assertions="$(${rootDir}/bin/release/phpunit-assertions)"
-    echo "Assertions: ${assertions}"
-
-    echo "Edit assertions in README.md"
-    local badge="![Assertions](https:\/\/img.shields.io\/badge\/assertions-${assertions}-blue.svg)"
-    sed -i "9s/.*/${badge}/" "${rootDir}"/README.md
-}
-
 function updateComposerRequire() {
     trap onError ERR
 
     echo "Edit composer require in README.md"
     local majorMinor=${version%.*}
-    sed -i "s/composer require php-pp\/core ^[[:digit:]]\+.[[:digit:]]\+/composer require php-pp\/core ^${majorMinor}/" README.md
-}
-
-function updateInfectionBadge() {
-    trap onError ERR
-
-    echo "Calculate Infection MSI"
-
-    local logsPath="${rootDir}"/var/release/infection/logs.json
-    if [ -f "${logsPath}" ]; then
-        rm "${logsPath}"
-    fi
-
-    "${rootDir}"/bin/release/infection > /dev/null
-
-    if [ ! -f "${logsPath}" ]; then
-        echo "Unable to find infection logs.json."
-        ls -lah "${rootDir}"/var
-        ls -lah "${rootDir}"/var/release
-        ls -lah "${rootDir}"/var/release/infection
-        exit 1
-    fi
-
-    local infectionMsiPercent=
-    infectionMsiPercent=$(jq -r ".stats.msi" < "${logsPath}")
-    infectionMsiPercent=$(echo "${infectionMsiPercent}/1" | bc)
-    echo "Infection MSI: ${infectionMsiPercent}%"
-
-    local badge="![Infection](https:\/\/img.shields.io\/badge\/infection-${infectionMsiPercent}%25-success.svg)"
-    sed -i "11s/.*/${badge}/" "${rootDir}"/README.md
-}
-
-function preparePhpunitData() {
-    echo "Prepare PHPUnit data"
-    "${rootDir}/bin/release/phpunit-prepare"
+    sed -i "s/composer require steevanb\/doctrine-stats ^[[:digit:]]\+.[[:digit:]]\+/composer require steevanb\/doctrine-stats ^${majorMinor}/" README.md
 }
 
 function updateChangelog() {
@@ -134,11 +67,5 @@ function updateChangelog() {
 initLog
 updateReleaseBadge
 updateCodeLinesBadge
-preparePhpunitData
-updateTestsBadge
-updateAssertionsBadge
-updateCoverageBadge
-updateInfectionBadge
 updateComposerRequire
-# https://github.com/php-pp/core/issues/2
-#updateChangelog
+updateChangelog

@@ -17,7 +17,6 @@ require dirname(__DIR__, 2) . '/vendor/autoload.php';
     ->addProcess(new Process([__DIR__ . '/phpcs']))
     ->addProcess(new Process([__DIR__ . '/phpdd']))
     ->addProcess(new Process([__DIR__ . '/phpstan']))
-    ->addProcess(new Process([__DIR__ . '/phpunit']))
     ->addProcess(new Process([__DIR__ . '/shellcheck']))
     ->addProcess(new Process([__DIR__ . '/unused-scanner']))
     ->run(new ArgvInput($argv));
