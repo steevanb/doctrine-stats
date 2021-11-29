@@ -1,6 +1,6 @@
 services:
     doctrine_stats.data_collector.stats:
-        class: steevanb\DoctrineStats\Bridge\DoctrineStatsBundle\DataCollector\DoctrineStatsCollector
+        class: Steevanb\DoctrineStats\Bridge\DoctrineStatsBundle\DataCollector\DoctrineStatsCollector
         arguments: [ '@doctrine_stats.logger.sql', '@doctrine' ]
         public: false
         tags:
@@ -11,11 +11,11 @@ services:
                 priority: 249
 
     doctrine_stats.event_subscriber.doctrine:
-        class: steevanb\DoctrineStats\EventSubscriber\DoctrineEventSubscriber
+        class: Steevanb\DoctrineStats\EventSubscriber\DoctrineEventSubscriber
         arguments: [ '@doctrine_stats.data_collector.stats' ]
         tags:
             - { name: doctrine.event_subscriber }
 
     doctrine_stats.logger.sql:
-        class: steevanb\DoctrineStats\Doctrine\DBAL\Logger\SqlLogger
+        class: Steevanb\DoctrineStats\Doctrine\DBAL\Logger\SqlLogger
         public: false
