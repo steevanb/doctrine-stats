@@ -1,5 +1,7 @@
 ### master
 
+### [2.0.0](../../compare/1.4.0...2.0.0) - 2021-11-29
+
 - [BC break] Move source files to `src/`
 - [BC break] Move `ComposerOverloadClass` directory from source root to `src/Bridge/ComposerOverloadClass`
 - [BC break] Change PHP version from `^5.4 || ^7.0` to `^7.1 || ^8.0`
