@@ -3,7 +3,7 @@
 - [BC break] Move source files to `src/`
 - [BC break] Move `ComposerOverloadClass` directory from source root to `src/Bridge/ComposerOverloadClass`
 - [BC break] Change PHP version from `^5.4 || ^7.0` to `^7.1 || ^8.0`
-- Rename root namespace from `steevanb` to `Steevanb`
+- [BC Break] Rename root namespace from `steevanb` to `Steevanb`
 - Add PHP 7.1 type hints
 - Add `bin`, `config` and `docker` directories
 - Add binaries to start the project, build Docker images, run CI tools etc

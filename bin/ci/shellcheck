@@ -13,11 +13,9 @@ readonly binaries=(
     bin/ci/composer-normalize
     bin/ci/docker
     bin/ci/env
-    bin/ci/infection
     bin/ci/phpcs
     bin/ci/phpdd
     bin/ci/phpstan
-    bin/ci/phpunit
     bin/ci/phpunit-coverage
     bin/ci/shellcheck
     bin/ci/unused-scanner
@@ -30,11 +28,6 @@ readonly binaries=(
     bin/release/code-lines
     bin/release/docker
     bin/release/env
-    bin/release/infection
-    bin/release/phpunit-assertions
-    bin/release/phpunit-coverage
-    bin/release/phpunit-prepare
-    bin/release/phpunit-tests
     bin/release/prepare
     bin/composer
     bin/docker-build.inc.bash

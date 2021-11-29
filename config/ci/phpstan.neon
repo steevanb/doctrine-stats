@@ -14,6 +14,7 @@ parameters:
         - '#Call to method [A-Za-z]{1,}\(\) of deprecated class Doctrine\\ORM\\ORMException#'
         - '#Call to deprecated method [A-Za-z]{1,}\(\) of class Doctrine\\ORM\\Configuration#'
         - '#Call to method createProxyDefinition\(\) of deprecated class Doctrine\\ORM\\Proxy\\ProxyFactory:#'
+        - '#Class Steevanb\\DoctrineStats\\Doctrine\\DBAL\\Logger\\SqlLogger implements deprecated interface Doctrine\\DBAL\\Logging\\SQLLogger\:#'
         # I prefer use static instead of self
         - '#Unsafe usage of new static\(\)\.#'
         # I've tested the existence of the class with class_exists() but phpstan don't understand it
