@@ -54,7 +54,7 @@ function updateComposerRequire() {
 
     echo "Edit composer require in README.md"
     local majorMinor=${version%.*}
-    sed -i "s/composer require steevanb\/doctrine-stats ^[[:digit:]]\+.[[:digit:]]\+/composer require steevanb\/doctrine-stats ^${majorMinor}/" README.md
+    sed -i "s/composer require --dev steevanb\/doctrine-stats ^[[:digit:]]\+.[[:digit:]]\+/composer require --dev steevanb\/doctrine-stats ^${majorMinor}/" README.md
 }
 
 function updateChangelog() {

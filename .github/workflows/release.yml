@@ -1,0 +1,47 @@
+name: Release
+
+on:
+    workflow_dispatch:
+        inputs:
+            version:
+                description: Version
+                required: true
+
+jobs:
+    build:
+        name: Release
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            -
+                name: Composer cache
+                uses: actions/cache@v2
+                with:
+                    path: vendor
+                    key: composer-${{ hashFiles('composer.json') }}
+                    restore-keys: composer-${{ hashFiles('composer.json') }}
+            - run: bin/release/env
+            - run: bin/release/prepare "${{ github.event.inputs.version }}"
+            -
+                id: create-pull-request
+                name: Create pull request
+                uses: peter-evans/create-pull-request@v3
+                with:
+                    title: Release ${{ github.event.inputs.version }}
+                    commit-message: Release ${{ github.event.inputs.version }}
+                    branch: release-${{ github.event.inputs.version }}
+                    labels: Release
+                    delete-branch: true
+            -
+                name: Merge pull request
+                uses: juliangruber/merge-pull-request-action@v1
+                with:
+                    github-token: ${{ secrets.RELEASE_TOKEN }}
+                    number: ${{ steps.create-pull-request.outputs.pull-request-number }}"
+                    method: rebase
+            -
+                name: Create release
+                uses: softprops/action-gh-release@v1
+                with:
+                    tag_name: ${{ github.event.inputs.version }}
+                    body: "[Changelog](changelog.md)"
