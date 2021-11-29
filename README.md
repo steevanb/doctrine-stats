@@ -1,6 +1,6 @@
-[![version](https://img.shields.io/badge/version-1.4.0-green.svg)](https://github.com/steevanb/doctrine-stats/tree/1.4.0)
+[![Version](https://img.shields.io/badge/version-1.4.0-4B9081.svg)](https://github.com/steevanb/doctrine-stats/tree/1.4.0)
 [![doctrine](https://img.shields.io/badge/doctrine/orm-^2.4.8-blue.svg)](http://www.doctrine-project.org)
-[![php](https://img.shields.io/badge/php-^5.4.6%20||%20^7.0-blue.svg)](http://www.php.net)
+[![php](https://img.shields.io/badge/php-^5.4.6%20||%20^7.0||%20^8.0-blue.svg)](http://www.php.net)
 ![Lines](https://img.shields.io/badge/code%20lines-2162-green.svg)
 ![Total Downloads](https://poser.pugx.org/steevanb/doctrine-stats/downloads)
 
@@ -18,7 +18,7 @@ Add important Doctrine statistics:
 ### Installation
 
 ```bash
-composer require --dev steevanb/doctrine-stats:^1.4
+composer require --dev steevanb/doctrine-stats ^1.4
 ```
 
 If you want to add hydration time to your statistics:

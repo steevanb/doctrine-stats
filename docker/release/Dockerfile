@@ -13,19 +13,6 @@ RUN \
         jq \
         git \
 
-    # Install xdebug
-    && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
-    && pecl install xdebug-3.0.4 \
-    && docker-php-ext-enable xdebug \
-    && apk del .build-deps \
-
-    # Install infection
-    && composer global require infection/infection:0.25.* \
-    && ln -s ${COMPOSER_HOME}/vendor/bin/infection /usr/local/bin/infection \
-
-    # Configure Composer
-    && chmod -R 777 ${COMPOSER_HOME} \
-
     # Purge
     && rm -rf /var/cache/apk/* \
     && rm -rf /tmp/*
