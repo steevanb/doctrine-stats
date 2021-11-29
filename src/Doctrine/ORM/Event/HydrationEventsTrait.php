@@ -29,6 +29,7 @@ trait HydrationEventsTrait
         return $this;
     }
 
+    /** @param array<mixed> $data */
     protected function dispatchPostCreateEntityEvent(ClassMetadata $classMetaData, array $data): self
     {
         $identifiers = [];

@@ -1,4 +1,0 @@
-includes:
-    - phpstan.neon
-parameters:
-    tmpDir: ../../var/ci/phpstan/php-7-1

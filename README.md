@@ -3,11 +3,10 @@
 [![php](https://img.shields.io/badge/php-^5.4.6%20||%20^7.0-blue.svg)](http://www.php.net)
 ![Lines](https://img.shields.io/badge/code%20lines-2162-green.svg)
 ![Total Downloads](https://poser.pugx.org/steevanb/doctrine-stats/downloads)
-[![Scrutinizer](https://scrutinizer-ci.com/g/steevanb/doctrine-stats/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/steevanb/doctrine-stats/)
 
 ### doctrine-stats
 
-Add important Doctrine statistics :
+Add important Doctrine statistics:
 * Count managed entities
 * Count lazy loaded entities
 * Hydration time by hydrator and query
@@ -19,10 +18,10 @@ Add important Doctrine statistics :
 ### Installation
 
 ```bash
-composer require --dev "steevanb/doctrine-stats": "^1.4"
+composer require --dev steevanb/doctrine-stats:^1.4
 ```
 
-If you want to add hydration time to your statistics :
+If you want to add hydration time to your statistics:
 
 `composer.json`
 ```json
@@ -83,7 +82,7 @@ class AppKernel
 }
 ```
 
-If you want to add lazy loaded entities to your statistics :
+If you want to add lazy loaded entities to your statistics:
 
 ```yml
 # app/config/config_dev.yml

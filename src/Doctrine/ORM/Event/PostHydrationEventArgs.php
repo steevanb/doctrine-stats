@@ -13,9 +13,10 @@ class PostHydrationEventArgs extends EventArgs
     /** @var string */
     protected $preHydrationEventId;
 
-    /** @var string */
+    /** @var class-string */
     protected $hydratorClassName;
 
+    /** @param class-string $hydratorClassName */
     public function __construct(string $preHydrationEventId, string $hydratorClassName)
     {
         $this->preHydrationEventId = $preHydrationEventId;
@@ -27,6 +28,7 @@ class PostHydrationEventArgs extends EventArgs
         return $this->preHydrationEventId;
     }
 
+    /** @return class-string */
     public function getHydratorClassName(): string
     {
         return $this->hydratorClassName;

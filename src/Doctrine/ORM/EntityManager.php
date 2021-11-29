@@ -33,7 +33,7 @@ class EntityManager extends DoctrineEntityManager
                 $conn = \Doctrine\DBAL\DriverManager::getConnection(
                     $conn,
                     $config,
-                    ($eventManager ?: new EventManager())
+                    $eventManager ?? new EventManager()
                 );
                 break;
 
@@ -54,12 +54,22 @@ class EntityManager extends DoctrineEntityManager
     {
         parent::__construct($conn, $config, $eventManager);
 
+        $proxyDir = $config->getProxyDir();
+        if (is_string($proxyDir) === false) {
+            throw new \Exception('Proxy directory must be configured.');
+        }
+
+        $proxyNamespace = $config->getProxyNamespace();
+        if (is_string($proxyNamespace) === false) {
+            throw new \Exception('Proxy namespace must be configured.');
+        }
+
         $this->setParentPrivatePropertyValue(
             'proxyFactory',
             new ProxyFactory(
                 $this,
-                $config->getProxyDir(),
-                $config->getProxyNamespace(),
+                $proxyDir,
+                $proxyNamespace,
                 $config->getAutoGenerateProxyClasses()
             )
         );

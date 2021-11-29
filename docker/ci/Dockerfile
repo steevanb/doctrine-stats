@@ -40,10 +40,8 @@ RUN \
     && mkdir /composer \
     && echo '{"config":{"cache-dir":"/app/var/composer/cache","sort-packages":true}}' > ${COMPOSER_HOME}/composer.json \
 
-    # For php scripts in bin
-    && php7.4 /usr/local/bin/composer global require \
-        steevanb/php-parallel-processes:0.2.* \
-        symfony/console:5.3.* \
+    # For php scripts in bin who will be executed with PHP 8.0
+    && php7.4 /usr/local/bin/composer global require steevanb/php-parallel-processes:0.2.* \
 
     # Install CI tools
     && php7.4 /usr/local/bin/composer global require \
