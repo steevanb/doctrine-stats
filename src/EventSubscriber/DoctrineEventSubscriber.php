@@ -15,10 +15,10 @@ use Steevanb\DoctrineStats\{
 
 class DoctrineEventSubscriber implements EventSubscriber
 {
-    /** @var string */
+    /** @var string|null */
     protected $preHydrationEventId;
 
-    /** @var float */
+    /** @var float|null */
     protected $preHydrationTime;
 
     /** @var DoctrineCollectorInterface  */
@@ -60,7 +60,7 @@ class DoctrineEventSubscriber implements EventSubscriber
             $postHydrationTime = microtime(true);
             $this->collector->addHydrationTime(
                 $eventArgs->getHydratorClassName(),
-                ($postHydrationTime - $this->preHydrationTime) * 1000
+                ($postHydrationTime - ($this->preHydrationTime ?? 0)) * 1000
             );
             $this->preHydrationEventId = null;
             $this->preHydrationTime = null;

@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Steevanb\DoctrineStats\Doctrine\ORM\Event;
 
+/** @codingStandardsIgnoreStart There is a bug with group use sniff in this specific case */
 use Doctrine\Common\EventArgs;
-use Doctrine\ORM\{
-    EntityManagerInterface,
-    Proxy\Proxy
-};
+use Doctrine\ORM\EntityManagerInterface;
+/** @codingStandardsIgnoreEnd */
 
 class PostLazyLoadEventArgs extends EventArgs
 {
@@ -32,9 +31,7 @@ class PostLazyLoadEventArgs extends EventArgs
         return $this->entityManager;
     }
 
-    /**
-     * @return Proxy
-     */
+    /** @return object */
     public function getEntity()
     {
         return $this->entity;

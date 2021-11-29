@@ -8,7 +8,7 @@ use Doctrine\DBAL\Logging\SQLLogger as SQLLoggerInterface;
 
 class SqlLogger implements SQLLoggerInterface
 {
-    /** @var array */
+    /** @var array<array<mixed>> */
     protected $queries = [];
 
     /** @var int */
@@ -54,9 +54,9 @@ class SqlLogger implements SQLLoggerInterface
         ];
     }
 
-    public function stopQuery()
+    public function stopQuery(): void
     {
-        $this->queries[$this->currentQueryIndex]['time'] = microtime(true) - $this->start;
+        $this->queries[$this->currentQueryIndex]['time'] = microtime(true) - ($this->start ?? 0);
     }
 
     public function getCurrentQueryIndex(): int
@@ -64,6 +64,7 @@ class SqlLogger implements SQLLoggerInterface
         return $this->currentQueryIndex;
     }
 
+    /** @return array<array<mixed>> */
     public function getQueries(): array
     {
         return $this->queries;

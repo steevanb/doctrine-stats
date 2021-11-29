@@ -3,7 +3,24 @@ parameters:
     paths:
         - ../../src
         - ../../tests
+    excludePaths:
+        - ../../src/Bridge/ComposerOverloadClass
     checkGenericClassInNonGenericObjectType: false
+    ignoreErrors:
+        - '#extends deprecated class Doctrine\\ORM\\Proxy\\ProxyFactory:#'
+        - '#with deprecated interface Doctrine\\ORM\\Proxy\\Proxy#'
+        # Remove deprecated errors to be compatible with Doctrine < 2.7
+        - '#Call to deprecated method [A-Za-z]{1,}\(\) of class Doctrine\\ORM\\ORMException#'
+        - '#Call to method [A-Za-z]{1,}\(\) of deprecated class Doctrine\\ORM\\ORMException#'
+        - '#Call to deprecated method [A-Za-z]{1,}\(\) of class Doctrine\\ORM\\Configuration#'
+        - '#Call to method createProxyDefinition\(\) of deprecated class Doctrine\\ORM\\Proxy\\ProxyFactory:#'
+        # I prefer use static instead of self
+        - '#Unsafe usage of new static\(\)\.#'
+        # I've tested the existence of the class with class_exists() but phpstan don't understand it
+        - '#Call to static method getBacktraces\(\) on an unknown class DumpBacktrace\.#'
+        # Wrong PHPDoc in Symfony code, this method exists
+        - '#Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\NodeDefinition::children\(\)\.#'
+
 includes:
     - /composer/vendor/phpstan/phpstan-deprecation-rules/rules.neon
     - /composer/vendor/phpstan/phpstan-phpunit/rules.neon

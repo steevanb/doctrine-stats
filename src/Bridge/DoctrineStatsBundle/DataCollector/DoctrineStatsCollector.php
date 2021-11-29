@@ -15,13 +15,13 @@ use Symfony\Component\HttpKernel\DataCollector\DataCollector;
 
 class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorInterface
 {
-    /** @var array */
+    /** @var array<mixed> */
     protected $lazyLoadedEntities = [];
 
     /** @var SqlLogger */
     protected $sqlLogger;
 
-    /** @var array */
+    /** @var array<mixed> */
     protected $hydrationTimes = [];
 
     /** @var int */
@@ -36,7 +36,7 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
     /** @var int */
     protected $hydrationTimeAlert = 5;
 
-    /** @var array */
+    /** @var array<mixed> */
     protected $hydratedEntities = [];
 
     /** @var ManagerRegistry */
@@ -54,7 +54,7 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
         return 'doctrine_stats';
     }
 
-    public function reset()
+    public function reset(): void
     {
         $this->data = [];
     }
@@ -120,7 +120,7 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
     /** @param float $time Time, in milliseconds */
     public function addHydrationTime(string $hydratorClassName, float $time): DoctrineCollectorInterface
     {
-        if (isset($this->hydrationTimes[$hydratorClassName]) === false) {
+        if (array_key_exists($hydratorClassName, $this->hydrationTimes) === false) {
             $this->hydrationTimes[$hydratorClassName] = [];
         }
         $this->hydrationTimes[$hydratorClassName][] = [
@@ -131,6 +131,7 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
         return $this;
     }
 
+    /** @param array<mixed> $classIdentifiers */
     public function addHydratedEntity(
         string $hydratorClassName,
         string $className,
@@ -148,7 +149,7 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
         return $this;
     }
 
-    public function collect(Request $request, Response $response, \Throwable $exception = null)
+    public function collect(Request $request, Response $response, \Throwable $exception = null): void
     {
         $this->data = [
             'lazyLoadedEntities' => $this->lazyLoadedEntities,
@@ -163,6 +164,7 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
         ];
     }
 
+    /** @return array<mixed> */
     public function getQueries(): array
     {
         static $return = false;
@@ -259,6 +261,7 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
         return count($this->getQueries());
     }
 
+    /** @return array<mixed> */
     public function getLazyLoadedEntities(): array
     {
         return $this->data['lazyLoadedEntities'];
@@ -286,6 +289,7 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
         return $count;
     }
 
+    /** @return array<mixed> */
     public function getManagedEntities(): array
     {
         static $ordered = false;
@@ -319,6 +323,7 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
         return round($return, 2);
     }
 
+    /** @return array<int|float> */
     public function getHydrationTimesByHydrator(): array
     {
         $return = [];
@@ -380,6 +385,7 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
         return $this->countQueries() === 0 || ($this->countQueries() > 0 && count($this->data['hydrationTimes']) > 0);
     }
 
+    /** @return array<mixed> */
     public function getHydratedEntities(string $hydrator): array
     {
         return array_key_exists($hydrator, $this->data['hydratedEntities'])
@@ -399,16 +405,30 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
         return $count;
     }
 
+    /** @return array<string, string> */
     public function explodeClassParts(string $fullyClassifiedClassName): array
     {
         $posBackSlash = strrpos($fullyClassifiedClassName, '\\');
 
-        return [
-            'namespace' => substr($fullyClassifiedClassName, 0, $posBackSlash),
-            'className' => substr($fullyClassifiedClassName, $posBackSlash + 1)
-        ];
+        if (is_int($posBackSlash) === false) {
+            $return = [
+                'namespace' => 'NOT FOUND',
+                'className' => 'NOT FOUND'
+            ];
+        } else {
+            $return = [
+                'namespace' => substr($fullyClassifiedClassName, 0, $posBackSlash),
+                'className' => substr($fullyClassifiedClassName, $posBackSlash + 1)
+            ];
+        }
+
+        return $return;
     }
 
+    /**
+     * @param array<mixed> $identifiers
+     * @return array<int>
+     */
     public function mergeIdentifiers(array $identifiers): array
     {
         $return = [];
@@ -422,6 +442,7 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
         return $return;
     }
 
+    /** @param array<mixed> $identifiers */
     public function identifiersAsString(array $identifiers): string
     {
         $return = [];
@@ -432,6 +453,7 @@ class DoctrineStatsCollector extends DataCollector implements DoctrineCollectorI
         return implode(', ', $return);
     }
 
+    /** @return array<array<mixed>> */
     protected function parseManagedEntities(): array
     {
         $return = [];

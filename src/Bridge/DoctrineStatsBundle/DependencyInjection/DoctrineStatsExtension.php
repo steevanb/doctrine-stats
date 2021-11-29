@@ -13,6 +13,7 @@ use Symfony\Component\DependencyInjection\{
 
 class DoctrineStatsExtension extends Extension
 {
+    /** @param array<mixed> $configs */
     public function load(array $configs, ContainerBuilder $container): void
     {
         $this
@@ -28,6 +29,7 @@ class DoctrineStatsExtension extends Extension
         return $this;
     }
 
+    /** @param array<mixed> $configs */
     protected function loadConfigs(array $configs, ContainerBuilder $container): self
     {
         $configuration = new Configuration();
