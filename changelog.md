@@ -7,6 +7,7 @@
 - Add PHP 7.1 type hints
 - Add `bin`, `config` and `docker` directories
 - Add binaries to start the project, build Docker images, run CI tools etc
+- Add `.gitattributes`
 
 ### [1.4.0](../../compare/1.3.3...1.4.0) - 2020-12-07
 
